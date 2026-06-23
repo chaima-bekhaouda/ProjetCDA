@@ -1,0 +1,19 @@
+{
+  "name": "chaima-bekhaouda/booknest",
+  "description": "BookNest - application de bibliothèque de livres en PHP MVC",
+  "type": "project",
+  "require": {
+    "php": "^8.2",
+    "vlucas/phpdotenv": "^5.6",
+    "zircote/swagger-php": "^4.11",
+    "firebase/php-jwt": "^7.0",
+    "ramsey/uuid": "^4.7",
+    "ext-pdo": "*",
+    "ext-pdo_pgsql": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}
