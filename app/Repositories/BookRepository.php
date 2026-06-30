@@ -19,4 +19,14 @@ class BookRepository
         $stmt = $this->pdo->query('SELECT * FROM books ORDER BY id DESC');
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    public function create(string $title): int
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO books (title) VALUES (:title)');
+        $stmt->execute([
+            ':title' => $title
+        ]);
+
+        return (int) $this->pdo->lastInsertId();
+    }
 }

@@ -1,24 +1,56 @@
 {
-  "openapi": "3.0.0",
-  "info": {
-    "title": "BookNest API",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://localhost:8000"
-    }
-  ],
-  "paths": {
-    "/books": {
-      "get": {
-        "summary": "Liste des livres",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
+    "openapi": "3.0.0",
+    "info": {
+        "title": "BookNest API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
         }
-      }
+    ],
+    "paths": {
+        "/books": {
+            "get": {
+                "summary": "Lister les livres",
+                "operationId": "134ccacbafc02c34b7ceb9eea2b90188",
+                "responses": {
+                    "200": {
+                        "description": "Liste des livres"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Créer un livre",
+                "operationId": "5f0070bac5d00429d4897fe71e795e14",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Le Petit Prince"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Livre créé"
+                    },
+                    "422": {
+                        "description": "Titre manquant"
+                    }
+                }
+            }
+        }
     }
-  }
 }

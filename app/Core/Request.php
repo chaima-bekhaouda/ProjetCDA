@@ -4,13 +4,16 @@ namespace App\Core;
 
 class Request
 {
-    public function uri(): string
-    {
-        return parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    }
-
     public function method(): string
     {
-        return strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    }
+
+    public function uri(): string
+    {
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $uri = parse_url($uri, PHP_URL_PATH) ?: '/';
+
+        return rtrim($uri, '/') ?: '/';
     }
 }
