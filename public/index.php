@@ -12,8 +12,12 @@ use App\Core\Router;
 
 $router = new Router();
 
+$bookController = new \App\Controllers\BookController();
+
 $router->get('/', [new HomeController(), 'index']);
 
 $router->get('/books', [new BookController(), 'index']);
+
+$router->post('/books', [$bookController, 'store']);
 
 $router->dispatch(new Request());
