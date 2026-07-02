@@ -13,17 +13,17 @@ class Database
         $port = '5432';
         $dbname = 'booknest';
         $user = 'postgres';
-        $password = '1008';
-
-        $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+        $pass = '1008';
 
         try {
-            return new PDO($dsn, $user, $password, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]);
+            return new PDO(
+                "pgsql:host={$host};port={$port};dbname={$dbname}",
+                $user,
+                $pass,
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            );
         } catch (PDOException $e) {
-            die('Erreur de connexion base de données : ' . $e->getMessage());
+            die('Database connection failed: ' . $e->getMessage());
         }
     }
 }

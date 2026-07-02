@@ -2,103 +2,69 @@
 
 namespace App\Controllers;
 
-use App\Core\Response;
 use App\Repositories\BookRepository;
-use OpenApi\Attributes as OA;
+use App\Core\Response;
 
-#[OA\Info(
-    title: 'BookNest API',
-    version: '1.0.0'
-)]
-#[OA\Server(
-    url: 'http://localhost:8000'
-)]
 class BookController
 {
-    private BookRepository $bookRepository;
+    public function __construct(private BookRepository $bookRepository) {}
 
-    public function __construct()
-    {
-        $this->bookRepository = new BookRepository();
-    }
-
-    #[OA\Get(
-        path: '/books',
-        summary: 'Lister les livres',
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Liste des livres'
-            )
-        ]
-    )]
     public function index(): void
     {
-        try {
-            $books = $this->bookRepository->all();
-
-            Response::json([
-                'success' => true,
-                'data' => $books
-            ]);
-        } catch (\Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => 'Erreur lors de la récupération des livres',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $books = $this->bookRepository->all();
+        require __DIR__ . '/../Views/books/index.php';
     }
 
-    #[OA\Post(
-        path: '/books',
-        summary: 'Créer un livre',
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                required: ['title'],
-                properties: [
-                    new OA\Property(property: 'title', type: 'string', example: 'Le Petit Prince')
-                ]
-            )
-        ),
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: 'Livre créé'
-            ),
-            new OA\Response(
-                response: 422,
-                description: 'Titre manquant'
-            )
-        ]
-    )]
+    public function create(): void
+    {
+        require __DIR__ . '/../Views/books/create.php';
+    }
+
     public function store(): void
     {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
+        $title = trim($_POST['title'] ?? '');
 
-            if (!is_array($input) || empty($input['title'])) {
-                Response::json([
-                    'success' => false,
-                    'message' => 'Le champ title est obligatoire'
-                ], 422);
-                return;
-            }
-
-            $id = $this->bookRepository->create($input['title']);
-
-            Response::json([
-                'success' => true,
-                'message' => 'Livre créé',
-                'id' => $id
-            ], 201);
-        } catch (\Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => 'Erreur lors de la création du livre',
-                'error' => $e->getMessage()
-            ], 500);
+        if ($title !== '') {
+            $this->bookRepository->create($title);
         }
+
+        Response::redirect('/books');
+    }
+
+    public function edit(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $book = $this->bookRepository->find($id);
+        require __DIR__ . '/../Views/books/edit.php';
+    }
+
+    public function update(): void
+    {
+        $id = (int)($_POST['id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+
+        if ($id > 0 && $title !== '') {
+            $this->bookRepository->update($id, $title);
+        }
+
+        Response::redirect('/books');
+    }
+
+    public function show(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $book = $this->bookRepository->find($id);
+        require __DIR__ . '/../Views/books/show.php';
+    }
+
+    public function delete(): void
+    {
+        $id = (int)($_POST['id'] ?? 0);
+
+        if ($id > 0) {
+            $this->bookRepository->delete($id);
+        }
+
+        Response::redirect('/books');
     }
 }

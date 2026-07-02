@@ -4,16 +4,8 @@ namespace App\Core;
 
 class Request
 {
-    public function method(): string
+    public static function input(string $key, $default = null)
     {
-        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    }
-
-    public function uri(): string
-    {
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        $uri = parse_url($uri, PHP_URL_PATH) ?: '/';
-
-        return rtrim($uri, '/') ?: '/';
+        return $_POST[$key] ?? $_GET[$key] ?? $default;
     }
 }

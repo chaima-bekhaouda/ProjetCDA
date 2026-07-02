@@ -6,26 +6,34 @@ class Router
 {
     private array $routes = [];
 
-    public function get(string $uri, callable $action): void
+    public function get(string $path, array $handler): void
     {
-        $this->routes['GET'][$uri] = $action;
+        $this->routes['GET'][$path] = $handler;
     }
 
-    public function post(string $uri, callable $action): void
+    public function post(string $path, array $handler): void
     {
-        $this->routes['POST'][$uri] = $action;
+        $this->routes['POST'][$path] = $handler;
     }
 
-    public function dispatch(Request $request): void
+    public function dispatch(string $uri, string $method): void
     {
-        $method = $request->method();
-        $uri = $request->uri();
+        $path = parse_url($uri, PHP_URL_PATH) ?? '/';
 
-        if (isset($this->routes[$method][$uri])) {
-            ($this->routes[$method][$uri])();
+        if (isset($this->routes[$method][$path])) {
+            [$class, $action] = $this->routes[$method][$path];
+
+            if (is_object($class)) {
+                $controller = $class;
+            } else {
+                $controller = new $class();
+            }
+
+            $controller->$action();
             return;
         }
 
-        Response::html('404 - Page not found', 404);
+        http_response_code(404);
+        echo '404 - Page not found';
     }
 }
