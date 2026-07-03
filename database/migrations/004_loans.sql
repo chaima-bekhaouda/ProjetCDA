@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS loans (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    book_id UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+    borrower VARCHAR(180) NOT NULL,
+    lent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    returned_at TIMESTAMPTZ
+);

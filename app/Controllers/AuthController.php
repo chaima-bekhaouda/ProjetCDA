@@ -2,73 +2,68 @@
 
 namespace App\Controllers;
 
-use App\Config\Database;
-use App\Repositories\UserRepository;
+use App\Core\Response;
+use App\Models\User;
 
 class AuthController
 {
+    public function loginForm(): void
+    {
+        Response::view('auth/login');
+    }
+
+    public function registerForm(): void
+    {
+        Response::view('auth/register');
+    }
+
     public function login(): void
     {
-        session_start();
-        $error = null;
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = trim($_POST['email'] ?? '');
-            $password = $_POST['password'] ?? '';
+        $user = User::findByEmail($email);
 
-            $repo = new UserRepository(Database::connect());
-            $user = $repo->findByEmail($email);
-
-            if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                header('Location: /dashboard');
-                exit;
-            }
-
-            $error = 'Email ou mot de passe incorrect.';
+        if (!$user || !password_verify($password, $user['password_hash'])) {
+            Response::view('auth/login', [
+                'error' => 'Identifiants invalides'
+            ]);
+            return;
         }
 
-        $title = 'Connexion';
-        $view = __DIR__ . '/../Views/auth/login.php';
-        require __DIR__ . '/../Views/layouts/auth.php';
+        $_SESSION['user'] = [
+            'id' => $user['id'],
+            'email' => $user['email'],
+            'display_name' => $user['display_name']
+        ];
+
+        header('Location: /');
+        exit;
     }
 
     public function register(): void
     {
-        session_start();
-        $error = null;
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $displayName = $_POST['display_name'] ?? '';
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = trim($_POST['name'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $password = $_POST['password'] ?? '';
-
-            if ($name === '' || $email === '' || $password === '') {
-                $error = 'Tous les champs sont obligatoires.';
-            } else {
-                $repo = new UserRepository(Database::connect());
-
-                if ($repo->findByEmail($email)) {
-                    $error = 'Cet email existe déjà.';
-                } else {
-                    $hash = password_hash($password, PASSWORD_DEFAULT);
-                    $repo->create($name, $email, $hash);
-                    header('Location: /login');
-                    exit;
-                }
-            }
+        if ($email === '' || $password === '' || $displayName === '') {
+            Response::view('auth/register', [
+                'error' => 'Tous les champs sont obligatoires'
+            ]);
+            return;
         }
 
-        $title = 'Inscription';
-        $view = __DIR__ . '/../Views/auth/register.php';
-        require __DIR__ . '/../Views/layouts/auth.php';
-    }
+        if (User::findByEmail($email)) {
+            Response::view('auth/register', [
+                'error' => 'Cet email existe déjà'
+            ]);
+            return;
+        }
 
-    public function logout(): void
-    {
-        session_start();
-        session_destroy();
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        User::create($email, $hash, $displayName);
+
         header('Location: /login');
         exit;
     }
