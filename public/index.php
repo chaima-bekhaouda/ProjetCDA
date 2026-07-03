@@ -8,6 +8,7 @@ use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Config\Database;
 use Dotenv\Dotenv;
+use App\Controllers\DashboardController;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
@@ -20,6 +21,7 @@ $router->get('/login', [new AuthController(), 'loginForm']);
 $router->post('/login', [new AuthController(), 'login']);
 $router->get('/register', [new AuthController(), 'registerForm']);
 $router->post('/register', [new AuthController(), 'register']);
+$router->get('/dashboard', [new DashboardController(), 'index']);
 
 $router->get('/db-test', function () {
     $pdo = Database::connect();
