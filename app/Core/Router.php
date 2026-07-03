@@ -1,48 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Core;
 
 class Router
 {
     private array $routes = [];
 
-    public function get(string $uri, $action): void
+    public function get(string $path, callable $callback): void
     {
-        $this->routes['GET'][$uri] = $action;
+        $this->routes['GET'][$path] = $callback;
     }
 
-    public function post(string $uri, $action): void
+    public function post(string $path, callable $callback): void
     {
-        $this->routes['POST'][$uri] = $action;
+        $this->routes['POST'][$path] = $callback;
     }
 
-    public function dispatch(Request $request): void
+    public function resolve(Request $request): void
     {
-        $method = $request->method();
-        $uri = $request->uri();
+        $method = $request->method;
+        $uri = $request->uri;
 
-        if (!isset($this->routes[$method][$uri])) {
-            Response::html('404 - Page not found', 404);
-            return;
-        }
-
-        $action = $this->routes[$method][$uri];
-
-        if (is_array($action) && count($action) === 2) {
-            [$object, $methodName] = $action;
-            if (is_object($object) && method_exists($object, $methodName)) {
-                $object->$methodName();
+        foreach ($this->routes[$method] ?? [] as $path => $callback) {
+            if ($path === $uri) {
+                $callback($request);
                 return;
             }
         }
 
-        if (is_callable($action)) {
-            call_user_func($action);
-            return;
-        }
-
-        throw new \TypeError('Route action is not callable');
+        http_response_code(404);
+        echo '404 - Page not found';
     }
 }

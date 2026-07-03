@@ -2,11 +2,15 @@
 
 namespace App\Controllers;
 
+use App\Core\Response;
+use App\Core\Request;
+
 class HomeController
 {
-    public function index(): void
+    public function index(Request $request): void
     {
-        header('Location: /dashboard');
-        exit;
+        Response::view('home/index', [
+            'message' => 'BookNest fonctionne avec MVC'
+        ]);
     }
 }
