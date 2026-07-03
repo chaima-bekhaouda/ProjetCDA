@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Request;
 use App\Core\Router;
+use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Config\Database;
 use Dotenv\Dotenv;
@@ -15,6 +16,10 @@ $request = new Request();
 $router = new Router();
 
 $router->get('/', [new HomeController(), 'index']);
+$router->get('/login', [new AuthController(), 'loginForm']);
+$router->post('/login', [new AuthController(), 'login']);
+$router->get('/register', [new AuthController(), 'registerForm']);
+$router->post('/register', [new AuthController(), 'register']);
 
 $router->get('/db-test', function () {
     $pdo = Database::connect();
