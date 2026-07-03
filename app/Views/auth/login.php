@@ -1,11 +1,19 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="UTF-8"><title>Connexion</title></head>
-<body>
-<h1>Connexion</h1>
-<form method="post" action="/login">
-    <input type="email" name="email" placeholder="Email">
-    <button type="submit">Se connecter</button>
-</form>
-</body>
-</html>
+<div class="auth-card">
+    <h1>Connexion</h1>
+
+    <?php if (!empty($error)): ?>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
+
+    <form method="post" action="/login">
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Mot de passe</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <p><a href="/register">Créer un compte</a></p>
+</div>

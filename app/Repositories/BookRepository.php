@@ -6,42 +6,29 @@ use PDO;
 
 class BookRepository
 {
-    private PDO $pdo;
-
-    public function __construct(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-    }
+    public function __construct(private PDO $pdo) {}
 
     public function all(): array
     {
-        $stmt = $this->pdo->query("SELECT id, title FROM books ORDER BY id DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "
+            SELECT
+                b.*,
+                a.nom AS author_nom,
+                a.prenom AS author_prenom,
+                g.libelle AS genre_libelle,
+                r.libelle AS status_libelle
+            FROM books b
+            LEFT JOIN authors a ON a.id = b.author_id
+            LEFT JOIN genres g ON g.id = b.genre_id
+            LEFT JOIN reading_status r ON r.id = b.status_id
+            ORDER BY b.id DESC
+        ";
+
+        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function find(int $id): ?array
+    public function countAll(): int
     {
-        $stmt = $this->pdo->prepare("SELECT id, title FROM books WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        $book = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $book ?: null;
-    }
-
-    public function create(string $title): bool
-    {
-        $stmt = $this->pdo->prepare("INSERT INTO books (title) VALUES (:title)");
-        return $stmt->execute(['title' => $title]);
-    }
-
-    public function update(int $id, string $title): bool
-    {
-        $stmt = $this->pdo->prepare("UPDATE books SET title = :title WHERE id = :id");
-        return $stmt->execute(['id' => $id, 'title' => $title]);
-    }
-
-    public function delete(int $id): bool
-    {
-        $stmt = $this->pdo->prepare("DELETE FROM books WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM books')->fetchColumn();
     }
 }

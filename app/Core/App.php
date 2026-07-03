@@ -2,12 +2,10 @@
 
 namespace App\Core;
 
-use App\Controllers\HomeController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\BookController;
-use App\Repositories\BookRepository;
-use App\Config\Database;
+use App\Controllers\HomeController;
 
 class App
 {
@@ -17,28 +15,28 @@ class App
     {
         $this->router = new Router();
 
-        $pdo = Database::connect();
-        $bookRepository = new BookRepository($pdo);
-        $bookController = new BookController($bookRepository);
+        $home = new HomeController();
+        $dashboard = new DashboardController(); 
+        $books = new BookController();
+        $auth = new AuthController();
 
-        $this->router->get('/', [HomeController::class, 'index']);
-        $this->router->get('/login', [AuthController::class, 'login']);
-        $this->router->post('/login', [AuthController::class, 'authenticate']);
-        $this->router->get('/logout', [AuthController::class, 'logout']);
+        $this->router->get('/', [$home, 'index']);
+        $this->router->get('/dashboard', [$dashboard, 'index']);
+        $this->router->post('/books', [$books, 'index']);
+        $this->router->get('/authors', [$dashboard, 'authors']);
+        $this->router->get('/loans', [$dashboard, 'loans']);
+        $this->router->get('/reading-sessions', [$dashboard, 'sessions']);
+        $this->router->get('/users', [$dashboard, 'users']);
 
-        $this->router->get('/dashboard', [DashboardController::class, 'index']);
-
-        $this->router->get('/books', [$bookController, 'index']);
-        $this->router->get('/books/create', [$bookController, 'create']);
-        $this->router->post('/books/store', [$bookController, 'store']);
-        $this->router->get('/books/edit', [$bookController, 'edit']);
-        $this->router->post('/books/update', [$bookController, 'update']);
-        $this->router->get('/books/show', [$bookController, 'show']);
-        $this->router->post('/books/delete', [$bookController, 'delete']);
+        $this->router->get('/login', [$auth, 'login']);
+        $this->router->post('/login', [$auth, 'login']);
+        $this->router->get('/register', [$auth, 'register']);
+        $this->router->post('/register', [$auth, 'register']);
+        $this->router->get('/logout', [$auth, 'logout']);
     }
 
     public function run(): void
     {
-        $this->router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+        $this->router->dispatch($_SERVER['REQUEST_URI'] ?? '/', $_SERVER['REQUEST_METHOD'] ?? 'GET');
     }
 }
