@@ -1,0 +1,3 @@
+TRUNCATE TABLE users CASCADE;
+ALTER TABLE users
+ALTER COLUMN password_hash SET DEFAULT '';
