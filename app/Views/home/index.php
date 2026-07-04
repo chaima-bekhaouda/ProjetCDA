@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookNest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/home.css">
 </head>
 <body>
@@ -45,42 +48,41 @@
     </div>
 </header>
         <main class="home-main">
-            <section class="hero-card">
-                <div class="hero-text">
-                    <span class="eyebrow">Ma collection</span>
-                    <h2>Chaque livre a sa place. 
-                        Chaque histoire, son étagère.
-                    </h2>
-                    <p>
-                        Parcourez votre collection comme une vraie bibliothèque. 
-                        Cliquez sur ur tranche bour ouvrr le livre suivez vos lectures et vos brefs.
-                    </p>
-                </div>
-
-                <div class="hero-stats">
-                   <div class="hero-stats">
-    <div class="stat-card stat-books">
-        <span class="stat-number">0</span>
-        <span class="stat-label">LIVRES</span>
+            <section class="hero-section">
+    <div class="hero-left">
+        <span class="hero-eyebrow">RAYON PRINCIPAL</span>
+        <h2>
+            Chaque livre a sa place.<br>
+            <em>Chaque histoire, son étagère.</em>
+        </h2>
+        <p>
+            Parcourez votre collection comme une vraie bibliothèque.
+            Cliquez sur une tranche pour ouvrir le livre, suivez vos lectures et vos prêts.
+        </p>
     </div>
 
-    <div class="stat-card stat-finished">
-        <span class="stat-number">0</span>
-        <span class="stat-label">TERMINES</span>
-    </div>
+    <div class="hero-right">
+        <div class="stat-card">
+            <span class="stat-number">27</span>
+            <span class="stat-label">LIVRES</span>
+        </div>
 
-    <div class="stat-card stat-progress">
-        <span class="stat-number">0</span>
-        <span class="stat-label">EN COURS</span>
-    </div>
+        <div class="stat-card">
+            <span class="stat-number">11</span>
+            <span class="stat-label">TERMINÉS</span>
+        </div>
 
-    <div class="stat-card stat-pages">
-        <span class="stat-number">0</span>
-        <span class="stat-label">PAGES LUES</span>
+        <div class="stat-card">
+            <span class="stat-number">4</span>
+            <span class="stat-label">EN COURS</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-number">3769</span>
+            <span class="stat-label">PAGES LUES</span>
+        </div>
     </div>
-</div>
-                </div>
-            </section>
+</section>
 
             <section class="library-section">
                 <div class="section-head">
