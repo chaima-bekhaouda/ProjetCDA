@@ -9,52 +9,76 @@
 <body>
     <div class="home-shell">
         <header class="home-header">
-            <div class="brand">
-    <img
-        src="/assets/images/logobooknest.png"
-        alt="Logo BookNest"
-        class="brand-logo"
-        />
-    <div>
-        <h1>BookNest</h1>
-        <p>Votre bibliothèque personnelle</p>
-    </div>
-</div>
-
-<form class="home-search" action="/search" method="get">
-        <input
-            type="text"
-            name="q"
-            class="home-search-input"
-            placeholder="Rechercher un livre, un auteur..."
-        >
-    </form>
-
-            <div class="header-actions">
-                <?php if (!empty($_SESSION['user']['display_name'])): ?>
-                    <span class="welcome">Bonjour, <?= htmlspecialchars($_SESSION['user']['display_name']) ?></span>
-                <?php endif; ?>
-
-                <a class="dashboard-link" href="/dashboard">Dashboard</a>
+    <div class="header-left">
+        <div class="brand">
+            <img
+                src="/assets/images/logobooknest.png"
+                alt="Logo BookNest"
+                class="brand-logo"
+            >
+            <div class="brand-text">
+                <h1>BookNest</h1>
+                <p>Votre collection personnelle</p>
             </div>
-        </header>
+        </div>
+    </div>
 
+    <div class="header-center">
+        <form class="home-search" action="/search" method="get">
+            <input
+                type="text"
+                name="q"
+                class="home-search-input"
+                placeholder="Chercher un titre, un auteur..."
+            >
+        </form>
+    </div>
+
+    <div class="header-right">
+        <?php if (!empty($_SESSION['user']['display_name'])): ?>
+            <span class="user-name"><?= htmlspecialchars($_SESSION['user']['display_name']) ?></span>
+        <?php else: ?>
+            <a class="action-btn login-btn" href="/login">Connexion</a>
+        <?php endif; ?>
+
+        <a class="action-btn add-btn" href="/books/create">+ Ajouter</a>
+    </div>
+</header>
         <main class="home-main">
             <section class="hero-card">
                 <div class="hero-text">
                     <span class="eyebrow">Ma collection</span>
-                    <h2>Retrouve tes livres dans une ambiance bibliothèque.</h2>
+                    <h2>Chaque livre a sa place. 
+                        Chaque histoire, son étagère.
+                    </h2>
                     <p>
-                        Consulte rapidement ta sélection, retrouve tes auteurs favoris
-                        et garde une vue simple sur ta bibliothèque BookNest.
+                        Parcourez votre collection comme une vraie bibliothèque. 
+                        Cliquez sur ur tranche bour ouvrr le livre suivez vos lectures et vos brefs.
                     </p>
                 </div>
 
                 <div class="hero-stats">
-                    <div class="stat-card">
-                        <span class="stat-number"><?= count($books) ?></span>
-                        <span class="stat-label">Livres affichés</span>
-                    </div>
+                   <div class="hero-stats">
+    <div class="stat-card stat-books">
+        <span class="stat-number">0</span>
+        <span class="stat-label">LIVRES</span>
+    </div>
+
+    <div class="stat-card stat-finished">
+        <span class="stat-number">0</span>
+        <span class="stat-label">TERMINES</span>
+    </div>
+
+    <div class="stat-card stat-progress">
+        <span class="stat-number">0</span>
+        <span class="stat-label">EN COURS</span>
+    </div>
+
+    <div class="stat-card stat-pages">
+        <span class="stat-number">0</span>
+        <span class="stat-label">PAGES LUES</span>
+    </div>
+</div>
                 </div>
             </section>
 
