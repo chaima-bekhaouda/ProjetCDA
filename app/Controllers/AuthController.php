@@ -37,7 +37,9 @@ class AuthController
             'display_name' => $user['display_name']
         ];
 
-        header('Location: /');
+        echo '<pre>';
+        var_dump($_SESSION);
+        echo '</pre>';
         exit;
     }
 
@@ -64,7 +66,7 @@ class AuthController
         $hash = password_hash($password, PASSWORD_DEFAULT);
         User::create($email, $hash, $displayName);
 
-        header('Location: /login');
-        exit;
+       header('Location: /');
+exit;
     }
 }
