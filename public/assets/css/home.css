@@ -267,3 +267,10 @@ body {
         font-size: 28px;
     }
 }
+.brand-logo {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+}

@@ -10,12 +10,16 @@
     <div class="home-shell">
         <header class="home-header">
             <div class="brand">
-                <div class="brand-mark">BN</div>
-                <div>
-                    <h1>BookNest</h1>
-                    <p>Votre bibliothèque personnelle</p>
-                </div>
-            </div>
+    <img
+        src="/assets/images/logobooknest.png"
+        alt="Logo BookNest"
+        class="brand-logo"
+        />
+    <div>
+        <h1>BookNest</h1>
+        <p>Votre bibliothèque personnelle</p>
+    </div>
+</div>
 
             <div class="header-actions">
                 <?php if (!empty($_SESSION['user']['display_name'])): ?>
