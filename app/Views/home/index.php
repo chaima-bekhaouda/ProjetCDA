@@ -21,6 +21,15 @@
     </div>
 </div>
 
+<form class="home-search" action="/search" method="get">
+        <input
+            type="text"
+            name="q"
+            class="home-search-input"
+            placeholder="Rechercher un livre, un auteur..."
+        >
+    </form>
+
             <div class="header-actions">
                 <?php if (!empty($_SESSION['user']['display_name'])): ?>
                     <span class="welcome">Bonjour, <?= htmlspecialchars($_SESSION['user']['display_name']) ?></span>
