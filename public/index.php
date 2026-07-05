@@ -11,6 +11,7 @@ use App\Controllers\HomeController;
 use App\Config\Database;
 use Dotenv\Dotenv;
 use App\Controllers\DashboardController;
+use App\Controllers\BookController;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
@@ -24,6 +25,9 @@ $router->post('/login', [new AuthController(), 'login']);
 $router->get('/register', [new AuthController(), 'registerForm']);
 $router->post('/register', [new AuthController(), 'register']);
 $router->get('/dashboard', [new DashboardController(), 'index']);
+$router->get('/books', [new BookController(), 'index']);
+$router->get('/books/create', [new BookController(), 'create']);
+$router->post('/books', [new BookController(), 'store']);
 
 $router->get('/db-test', function () {
     $pdo = Database::connect();
