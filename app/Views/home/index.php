@@ -63,22 +63,22 @@
 
     <div class="hero-right">
         <div class="stat-card">
-            <span class="stat-number">27</span>
+            <span class="stat-number"><?= (int) ($stats['total_books'] ?? 0) ?></span>
             <span class="stat-label">LIVRES</span>
         </div>
 
         <div class="stat-card">
-            <span class="stat-number">11</span>
-            <span class="stat-label">TERMINÉS</span>
+            <span class="stat-number"><?= (int) ($stats['finished_books'] ?? 0) ?></span>
+            <span class="stat-label">TERMINÉS</span></span>
         </div>
 
         <div class="stat-card">
-            <span class="stat-number">4</span>
+            <span class="stat-number"><?= (int) ($stats['reading_books'] ?? 0) ?></span>
             <span class="stat-label">EN COURS</span>
         </div>
 
         <div class="stat-card">
-            <span class="stat-number">3769</span>
+            <span class="stat-number"><?= (int) ($stats['total_pages'] ?? 0) ?></span>
             <span class="stat-label">PAGES LUES</span>
         </div>
     </div>
@@ -124,7 +124,7 @@
     type="button"
     class="cover-book trigger-book-modal"
     data-title="Les Morsures du passé"
-    data-author="Auteur inconnu"
+    data-author="Lisa Gardner"
     data-year="2024"
     data-genre="Thriller"
     data-pages="368"
@@ -139,7 +139,7 @@
     type="button"
     class="cover-book trigger-book-modal"
     data-title="Preuves d'amour"
-    data-author="Auteur inconnu"
+    data-author="Lisa Gardner"
     data-year="2022"
     data-genre="Roman"
     data-pages="320"
@@ -169,7 +169,7 @@
     type="button"
     class="cover-book trigger-book-modal"
     data-title="Famille parfaite"
-    data-author="Auteur inconnu"
+    data-author="Lisa Gardner"
     data-year="2021"
     data-genre="Roman noir"
     data-pages="352"
@@ -184,7 +184,7 @@
     type="button"
     class="cover-book trigger-book-modal"
     data-title="Lumière noire"
-    data-author="Auteur inconnu"
+    data-author="Lisa Gardner"
     data-year="2023"
     data-genre="Policier"
     data-pages="288"
