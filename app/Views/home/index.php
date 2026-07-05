@@ -84,6 +84,24 @@
     </div>
 </section>
 
+<section class="filters-section">
+    <div class="filters-col">
+        <button class="filter-chip active" type="button">Tous</button>
+        <button class="filter-chip" type="button">Roman</button>
+        <button class="filter-chip" type="button">Classique</button>
+        <button class="filter-chip" type="button">SF</button>
+        <button class="filter-chip" type="button">Essai</button>
+    </div>
+
+    <div class="filters-col">
+        <button class="filter-chip active" type="button">Tous statuts</button>
+        <button class="filter-chip" type="button">À lire</button>
+        <button class="filter-chip" type="button">En cours</button>
+        <button class="filter-chip" type="button">Terminé</button>
+        <button class="filter-chip" type="button">Prêté</button>
+    </div>
+</section>
+
             <section class="library-section">
                 <div class="section-head">
                     <div>
