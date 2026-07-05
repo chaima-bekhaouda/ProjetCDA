@@ -271,6 +271,159 @@ body {
     border-color: #d08a4b;
     color: #241109;
 }
+/* shelf container (si pas déjà présent, sinon fusionner) */
+.library-section { margin-top: 26px; }
+
+/* shelf visual */
+.shelf-block {
+  position: relative;
+  padding: 22px 18px 26px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(63,28,12,0.96) 0%, rgba(32,13,6,0.98) 100%);
+  border: 1px solid rgba(181,118,67,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,226,193,0.06), 0 24px 60px rgba(0,0,0,0.28);
+  overflow: hidden;
+}
+
+/* rows */
+.shelf-row { display:flex; align-items:flex-end; gap:12px; padding:10px 6px 0; min-height:160px; }
+.shelf-row--covers { justify-content: space-between; }
+.shelf-row--spines, .shelf-row--decor { gap:8px; align-items:flex-end; }
+
+/* cover cards */
+.cover-book { width:150px; flex:0 0 150px; transition: transform .18s ease; }
+.cover-book:hover { transform: translateY(-6px); }
+.cover-book img { width:100%; height:220px; object-fit:cover; border-radius:6px 6px 4px 4px; box-shadow:0 8px 18px rgba(0,0,0,0.28); }
+
+/* wooden plank */
+.shelf-plank {
+  height:18px; margin-top:8px; border-radius:3px;
+  background: linear-gradient(180deg,#9c6333 0%,#74411f 38%,#5a2f15 100%);
+  box-shadow: 0 3px 0 #44210d, 0 10px 18px rgba(0,0,0,0.22);
+}
+
+/* book spines */
+.spine-book {
+  display:flex; align-items:flex-end; justify-content:center;
+  width:62px; min-width:62px; height:180px; padding:12px 8px;
+  border-radius:4px 4px 0 0;
+  box-shadow: inset 1px 0 0 rgba(255,238,214,0.06), inset -1px 0 0 rgba(0,0,0,0.22), 0 8px 12px rgba(0,0,0,0.14);
+}
+.spine-book.tall { height:205px; }
+.spine-book span {
+  writing-mode:vertical-rl; text-orientation:mixed; transform:rotate(180deg);
+  font-size:12px; color:#f4e4d2; font-weight:700; letter-spacing:0.04em; text-align:center;
+}
+
+/* tones for variety */
+.tone-1 { background: linear-gradient(180deg,#243346 0%,#162230 100%); }
+.tone-2 { background: linear-gradient(180deg,#b77934 0%,#8e5924 100%); }
+.tone-3 { background: linear-gradient(180deg,#4a5d33 0%,#314021 100%); }
+.tone-4 { background: linear-gradient(180deg,#8a3d22 0%,#5d2413 100%); }
+.tone-5 { background: linear-gradient(180deg,#5f4732 0%,#3f2f22 100%); }
+.tone-6 { background: linear-gradient(180deg,#1d1d1d 0%,#0f0f0f 100%); }
+
+/* decor items */
+.decor-book { display:flex; align-items:flex-end; justify-content:center; min-width:110px; height:182px; }
+.decor-book img { max-width:100%; max-height:100%; object-fit:contain; }
+.decor-book--plant { width:120px; margin-right:8px; }
+.decor-book--globe { width:132px; margin-left:8px; }
+
+/* responsive tweaks (mobile) */
+@media (max-width:980px) {
+  .shelf-row--covers, .shelf-row--spines, .shelf-row--decor { overflow-x:auto; padding-bottom:8px; }
+  .cover-book { width:126px; flex-basis:126px; }
+  .cover-book img { height:188px; }
+  .spine-book { width:54px; min-width:54px; height:162px; }
+}
+@media (max-width:640px) {
+  .cover-book { width:108px; flex-basis:108px; }
+  .cover-book img { height:162px; }
+  .spine-book { width:48px; min-width:48px; height:150px; }
+  .decor-book--plant, .decor-book--globe { width:96px; }
+}
+
+@media (max-width: 1200px) {
+    .cover-book {
+        width: 132px;
+        flex-basis: 132px;
+    }
+
+    .cover-book img {
+        height: 198px;
+    }
+
+    .spine-book {
+        width: 54px;
+        min-width: 54px;
+    }
+}
+
+@media (max-width: 980px) {
+    .shelf-row--covers {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 8px;
+    }
+
+    .shelf-row--spines,
+    .shelf-row--decor {
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    .cover-book {
+        width: 126px;
+        flex-basis: 126px;
+    }
+
+    .cover-book img {
+        height: 188px;
+    }
+}
+
+@media (max-width: 640px) {
+    .shelf-block {
+        padding: 16px 12px 20px;
+        border-radius: 20px;
+    }
+
+    .shelf-row {
+        gap: 10px;
+        min-height: 160px;
+        padding-inline: 2px;
+    }
+
+    .cover-book {
+        width: 108px;
+        flex-basis: 108px;
+    }
+
+    .cover-book img {
+        height: 162px;
+    }
+
+    .spine-book {
+        width: 48px;
+        min-width: 48px;
+        height: 154px;
+    }
+
+    .spine-book.tall {
+        height: 176px;
+    }
+
+    .decor-book {
+        min-width: 92px;
+        height: 154px;
+    }
+
+    .decor-book--plant,
+    .decor-book--globe {
+        width: 96px;
+        margin: 0;
+    }
+}
 
 @media (max-width: 980px) {
     .home-header {

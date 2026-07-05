@@ -102,50 +102,62 @@
     </div>
 </section>
 
-            <section class="library-section">
-                <div class="section-head">
-                    <div>
-                        <span class="eyebrow">Étagère</span>
-                        <h3>Mes livres</h3>
-                    </div>
-                </div>
+           <section class="library-section">
+  <div class="shelf-block">
+    <!-- Top row: face covers -->
+    <div class="shelf-row shelf-row--covers">
+      <article class="cover-book"><img src="/assets/images/books/la-maison-da-cote.jpeg" alt="La Maison d'à côté"></article>
+      <article class="cover-book"><img src="/assets/images/books/les-morsures-du-passe.jpeg" alt="Les Morsures du passé"></article>
+      <article class="cover-book"><img src="/assets/images/books/preuves-damour.jpeg" alt="Preuves d'amour"></article>
+      <article class="cover-book"><img src="/assets/images/books/arretez-moi.jpeg" alt="Arrêtez-moi"></article>
+      <article class="cover-book"><img src="/assets/images/books/famille-parfaite.jpeg" alt="Famille parfaite"></article>
+      <article class="cover-book"><img src="/assets/images/books/lumiere-noire.jpeg" alt="Lumière noire"></article>
+    </div>
 
-                <?php if (empty($books)): ?>
-                    <div class="empty-state">
-                        <p>Aucun livre pour le moment.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="books-grid">
-                        <?php foreach ($books as $book): ?>
-                            <article class="book-card">
-                                <div
-                                    class="book-cover"
-                                    style="background: <?= htmlspecialchars($book['cover_color'] ?? '#7a2e2a') ?>;"
-                                >
-                                    <span class="book-cover-title">
-                                        <?= htmlspecialchars($book['title']) ?>
-                                    </span>
-                                </div>
+    <!-- shelf plank -->
+    <div class="shelf-plank"></div>
 
-                                <div class="book-body">
-                                    <h4><?= htmlspecialchars($book['title']) ?></h4>
-                                    <p class="author"><?= htmlspecialchars($book['author']) ?></p>
+    <!-- Middle row: spines (more books, real example titles) -->
+    <div class="shelf-row shelf-row--spines">
+      <!-- use real/known titles to fill visually -->
+      <div class="spine-book tone-1"><span>La Maison d'à côté</span></div>
+      <div class="spine-book tone-2"><span>Les Morsures du passé</span></div>
+      <div class="spine-book tone-3"><span>Preuves d'amour</span></div>
+      <div class="spine-book tone-4"><span>Arrêtez-moi</span></div>
+      <div class="spine-book tone-5"><span>Famille parfaite</span></div>
+      <div class="spine-book tone-6"><span>Lumière noire</span></div>
 
-                                    <div class="meta">
-                                        <?php if (!empty($book['genre'])): ?>
-                                            <span><?= htmlspecialchars($book['genre']) ?></span>
-                                        <?php endif; ?>
+      <!-- additional real books to look authentic (examples) -->
+      <div class="spine-book tone-2"><span>La Fille du train</span></div>
+      <div class="spine-book tone-4"><span>Ne le dis à personne</span></div>
+      <div class="spine-book tone-1"><span>Le Silence des agneaux</span></div>
+      <div class="spine-book tone-5"><span>Shutter Island</span></div>
+      <div class="spine-book tone-3"><span>La vérité sur l'affaire Harry</span></div>
+    </div>
 
-                                        <?php if (!empty($book['year'])): ?>
-                                            <span><?= htmlspecialchars((string) $book['year']) ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </article>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </section>
+    <div class="shelf-plank"></div>
+
+    <!-- Bottom row: plant on left, books center, globe on right -->
+    <div class="shelf-row shelf-row--decor">
+      <div class="decor-book decor-book--plant">
+        <img src="/assets/images/books/plant.png" alt="" aria-hidden="true">
+      </div>
+
+      <div class="spine-book tall tone-3"><span>La Maison d'à côté</span></div>
+      <div class="spine-book tone-5"><span>Les Morsures du passé</span></div>
+      <div class="spine-book tall tone-2"><span>Preuves d'amour</span></div>
+      <div class="spine-book tone-4"><span>Arrêtez-moi</span></div>
+      <div class="spine-book tall tone-1"><span>Famille parfaite</span></div>
+      <div class="spine-book tone-6"><span>Lumière noire</span></div>
+
+      <div class="decor-book decor-book--globe">
+        <img src="/assets/images/books/globe.png" alt="" aria-hidden="true">
+      </div>
+    </div>
+
+    <div class="shelf-plank"></div>
+  </div>
+</section>
         </main>
     </div>
 </body>
