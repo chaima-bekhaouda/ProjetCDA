@@ -104,35 +104,110 @@
 
            <section class="library-section">
   <div class="shelf-block">
-    <!-- Top row: face covers -->
     <div class="shelf-row shelf-row--covers">
-      <article class="cover-book"><img src="/assets/images/books/la-maison-da-cote.jpeg" alt="La Maison d'à côté"></article>
-      <article class="cover-book"><img src="/assets/images/books/les-morsures-du-passe.jpeg" alt="Les Morsures du passé"></article>
-      <article class="cover-book"><img src="/assets/images/books/preuves-damour.jpeg" alt="Preuves d'amour"></article>
-      <article class="cover-book"><img src="/assets/images/books/arretez-moi.jpeg" alt="Arrêtez-moi"></article>
-      <article class="cover-book"><img src="/assets/images/books/famille-parfaite.jpeg" alt="Famille parfaite"></article>
-      <article class="cover-book"><img src="/assets/images/books/lumiere-noire.jpeg" alt="Lumière noire"></article>
-    </div>
+  <button
+    type="button"
+    class="cover-book trigger-book-modal"
+    data-title="La Maison d'à côté"
+    data-author="Lisa Gardner"
+    data-year="2010"
+    data-genre="Roman"
+    data-pages="412"
+    data-status="Terminé"
+    data-quote="Un thriller tendu, intime et impossible à lâcher."
+    data-cover="/assets/images/books/la-maison-da-cote.jpeg"
+  >
+    <img src="/assets/images/books/la-maison-da-cote.jpeg" alt="La Maison d'à côté">
+  </button>
+
+  <button
+    type="button"
+    class="cover-book trigger-book-modal"
+    data-title="Les Morsures du passé"
+    data-author="Auteur inconnu"
+    data-year="2024"
+    data-genre="Thriller"
+    data-pages="368"
+    data-status="À lire"
+    data-quote="Une lecture sombre où le passé revient toujours frapper."
+    data-cover="/assets/images/books/les-morsures-du-passe.jpeg"
+  >
+    <img src="/assets/images/books/les-morsures-du-passe.jpeg" alt="Les Morsures du passé">
+  </button>
+
+  <button
+    type="button"
+    class="cover-book trigger-book-modal"
+    data-title="Preuves d'amour"
+    data-author="Auteur inconnu"
+    data-year="2022"
+    data-genre="Roman"
+    data-pages="320"
+    data-status="En cours"
+    data-quote="Un roman sensible sur les liens, les blessures et la réparation."
+    data-cover="/assets/images/books/preuves-damour.jpeg"
+  >
+    <img src="/assets/images/books/preuves-damour.jpeg" alt="Preuves d'amour">
+  </button>
+
+  <button
+    type="button"
+    class="cover-book trigger-book-modal"
+    data-title="Arrêtez-moi"
+    data-author="Lisa Gardner"
+    data-year="2015"
+    data-genre="Thriller"
+    data-pages="390"
+    data-status="À lire"
+    data-quote="Une tension constante et un doute qui s'installe dès les premières pages."
+    data-cover="/assets/images/books/arretez-moi.jpeg"
+  >
+    <img src="/assets/images/books/arretez-moi.jpeg" alt="Arrêtez-moi">
+  </button>
+
+  <button
+    type="button"
+    class="cover-book trigger-book-modal"
+    data-title="Famille parfaite"
+    data-author="Auteur inconnu"
+    data-year="2021"
+    data-genre="Roman noir"
+    data-pages="352"
+    data-status="Terminé"
+    data-quote="Sous l'apparence du calme, tout finit par se fissurer."
+    data-cover="/assets/images/books/famille-parfaite.jpeg"
+  >
+    <img src="/assets/images/books/famille-parfaite.jpeg" alt="Famille parfaite">
+  </button>
+
+  <button
+    type="button"
+    class="cover-book trigger-book-modal"
+    data-title="Lumière noire"
+    data-author="Auteur inconnu"
+    data-year="2023"
+    data-genre="Policier"
+    data-pages="288"
+    data-status="Lire plus tard"
+    data-quote="Une ambiance dense et hypnotique, entre enquête et nuit profonde."
+    data-cover="/assets/images/books/lumiere-noire.jpeg"
+  >
+    <img src="/assets/images/books/lumiere-noire.jpeg" alt="Lumière noire">
+  </button>
+</div>
+    
 
     <!-- shelf plank -->
     <div class="shelf-plank"></div>
 
-    <!-- Middle row: spines (more books, real example titles) -->
+    <!-- Middle row: book spines -->
     <div class="shelf-row shelf-row--spines">
-      <!-- use real/known titles to fill visually -->
       <div class="spine-book tone-1"><span>La Maison d'à côté</span></div>
-      <div class="spine-book tone-2"><span>Les Morsures du passé</span></div>
-      <div class="spine-book tone-3"><span>Preuves d'amour</span></div>
-      <div class="spine-book tone-4"><span>Arrêtez-moi</span></div>
-      <div class="spine-book tone-5"><span>Famille parfaite</span></div>
-      <div class="spine-book tone-6"><span>Lumière noire</span></div>
-
-      <!-- additional real books to look authentic (examples) -->
-      <div class="spine-book tone-2"><span>La Fille du train</span></div>
-      <div class="spine-book tone-4"><span>Ne le dis à personne</span></div>
-      <div class="spine-book tone-1"><span>Le Silence des agneaux</span></div>
-      <div class="spine-book tone-5"><span>Shutter Island</span></div>
-      <div class="spine-book tone-3"><span>La vérité sur l'affaire Harry</span></div>
+<div class="spine-book tone-2"><span>Les Morsures du passé</span></div>
+<div class="spine-book tone-3"><span>Preuves d'amour</span></div>
+<div class="spine-book tone-4"><span>Arrêtez-moi</span></div>
+<div class="spine-book tone-5"><span>Famille parfaite</span></div>
+<div class="spine-book tone-6"><span>Lumière noire</span></div>
     </div>
 
     <div class="shelf-plank"></div>
@@ -160,5 +235,94 @@
 </section>
         </main>
     </div>
+    <dialog id="book-modal" class="book-modal">
+    <div class="book-modal__panel">
+        <button type="button" class="book-modal__close" id="book-modal-close" aria-label="Fermer">×</button>
+
+        <div class="book-modal__layout">
+            <div class="book-modal__cover-wrap">
+                <img id="book-modal-cover" class="book-modal__cover" src="" alt="">
+            </div>
+
+            <div class="book-modal__content">
+                <span id="book-modal-status" class="book-modal__status">Terminé</span>
+
+                <h3 id="book-modal-title" class="book-modal__title">Titre du livre</h3>
+                <p id="book-modal-meta" class="book-modal__meta">Auteur · 2001</p>
+
+                <div class="book-modal__infos">
+                    <div class="book-info-card">
+                        <span class="book-info-label">Genre</span>
+                        <span id="book-modal-genre" class="book-info-value">Roman</span>
+                    </div>
+
+                    <div class="book-info-card">
+                        <span class="book-info-label">Pages</span>
+                        <span id="book-modal-pages" class="book-info-value">544</span>
+                    </div>
+                </div>
+
+                <blockquote id="book-modal-quote" class="book-modal__quote">
+                    « Citation du livre »
+                </blockquote>
+
+                <div class="book-modal__actions">
+                    <button type="button" class="modal-action modal-action--primary">Marquer en cours</button>
+                    <button type="button" class="modal-action modal-action--ghost">Modifier</button>
+                    <button type="button" class="modal-action modal-action--secondary">Lire le livre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<script>
+const bookModal = document.getElementById('book-modal');
+const modalCloseBtn = document.getElementById('book-modal-close');
+
+const modalCover = document.getElementById('book-modal-cover');
+const modalStatus = document.getElementById('book-modal-status');
+const modalTitle = document.getElementById('book-modal-title');
+const modalMeta = document.getElementById('book-modal-meta');
+const modalGenre = document.getElementById('book-modal-genre');
+const modalPages = document.getElementById('book-modal-pages');
+const modalQuote = document.getElementById('book-modal-quote');
+
+document.querySelectorAll('.trigger-book-modal').forEach((button) => {
+    button.addEventListener('click', () => {
+        const title = button.dataset.title || 'Livre';
+        const author = button.dataset.author || 'Auteur inconnu';
+        const year = button.dataset.year || '—';
+        const genre = button.dataset.genre || 'Genre inconnu';
+        const pages = button.dataset.pages || '—';
+        const status = button.dataset.status || 'À lire';
+        const quote = button.dataset.quote || 'Aucune note disponible.';
+        const cover = button.dataset.cover || '';
+
+        modalCover.src = cover;
+        modalCover.alt = title;
+
+        modalStatus.textContent = status;
+        modalTitle.textContent = title;
+        modalMeta.textContent = `${author} · ${year}`;
+        modalGenre.textContent = genre;
+        modalPages.textContent = pages;
+        modalQuote.textContent = `« ${quote} »`;
+
+        bookModal.showModal();
+    });
+});
+
+modalCloseBtn.addEventListener('click', () => {
+    bookModal.close();
+});
+
+bookModal.addEventListener('click', (event) => {
+    const panel = bookModal.querySelector('.book-modal__panel');
+    if (!panel.contains(event.target)) {
+        bookModal.close();
+    }
+});
+</script>
 </body>
 </html>
