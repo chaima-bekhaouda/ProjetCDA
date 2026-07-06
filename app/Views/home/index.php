@@ -80,10 +80,29 @@ function bookToneClass(int $index): string
 
         <div class="header-right">
             <?php if (!empty($_SESSION['user']['display_name'])): ?>
-                <span class="user-name"><?= e($_SESSION['user']['display_name']) ?></span>
-            <?php else: ?>
-                <a class="action-btn login-btn" href="/login">Connexion</a>
-            <?php endif; ?>
+    <div class="profile-menu">
+        <button type="button" class="profile-toggle" id="profile-toggle">
+            <span class="profile-avatar">
+                <?= strtoupper(substr(e($_SESSION['user']['display_name']), 0, 1)) ?>
+            </span>
+            <span class="profile-name"><?= e($_SESSION['user']['display_name']) ?></span>
+            <span class="profile-chevron">▾</span>
+        </button>
+
+        <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-dropdown-head">
+                <strong><?= e($_SESSION['user']['display_name']) ?></strong>
+                <span>Connecté sur BookNest</span>
+            </div>
+
+            <form method="post" action="/logout" class="logout-form">
+                <button type="submit" class="logout-btn">Se déconnecter</button>
+            </form>
+        </div>
+    </div>
+<?php else: ?>
+    <a class="action-btn login-btn" href="/login">Connexion</a>
+<?php endif; ?>
 
             <a class="action-btn add-btn" href="/books/create">+ Ajouter</a>
         </div>
@@ -362,6 +381,21 @@ if (bookModal) {
         const panel = bookModal.querySelector('.book-modal__panel');
         if (panel && !panel.contains(event.target)) {
             bookModal.close();
+        }
+    });
+}
+const profileToggle = document.getElementById('profile-toggle');
+const profileMenu = document.querySelector('.profile-menu');
+
+if (profileToggle && profileMenu) {
+    profileToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        profileMenu.classList.toggle('is-open');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!profileMenu.contains(event.target)) {
+            profileMenu.classList.remove('is-open');
         }
     });
 }

@@ -19,6 +19,7 @@ $dotenv->load();
 $request = new Request();
 $router = new Router();
 
+$authController = new AuthController();
 $router->get('/', [new HomeController(), 'index']);
 $router->get('/login', [new AuthController(), 'loginForm']);
 $router->post('/login', [new AuthController(), 'login']);
@@ -29,6 +30,7 @@ $router->get('/books', [new BookController(), 'index']);
 $router->get('/books/create', [new BookController(), 'create']);
 $router->post('/books', [new BookController(), 'store']);
 $router->post('/books/delete', [new BookController(), 'delete']);
+$router->post('/logout', [$authController, 'logout']);
 
 $router->get('/db-test', function () {
     $pdo = Database::connect();

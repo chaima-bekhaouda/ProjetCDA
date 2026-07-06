@@ -55,7 +55,15 @@ exit;
         exit;
     }
 
+public function logout(): void
+{
+    $_SESSION = [];
+    session_unset();
+    session_destroy();
 
+    header('Location: /login', true, 303);
+    exit;
+}
     public function register(): void
     {
         $email = $_POST['email'] ?? '';
