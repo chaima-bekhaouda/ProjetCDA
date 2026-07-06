@@ -93,4 +93,23 @@ class BookController
         header('Location: /', true, 303);
         exit;
     }
+
+    public function delete(): void
+{
+    $bookId = trim($_POST['book_id'] ?? '');
+    $userId = $_SESSION['user']['id'] ?? null;
+
+    if ($bookId === '' || empty($userId)) {
+        header('Location: /', true, 303);
+        exit;
+    }
+
+    $pdo = Database::connect();
+    $bookRepo = new BookRepository($pdo);
+    $bookRepo->delete($bookId, $userId);
+
+    header('Location: /', true, 303);
+    exit;
+}
+
 }

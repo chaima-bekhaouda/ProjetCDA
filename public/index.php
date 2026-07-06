@@ -28,6 +28,7 @@ $router->get('/dashboard', [new DashboardController(), 'index']);
 $router->get('/books', [new BookController(), 'index']);
 $router->get('/books/create', [new BookController(), 'create']);
 $router->post('/books', [new BookController(), 'store']);
+$router->post('/books/delete', [new BookController(), 'delete']);
 
 $router->get('/db-test', function () {
     $pdo = Database::connect();

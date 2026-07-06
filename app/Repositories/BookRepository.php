@@ -31,6 +31,7 @@ class BookRepository
         return $this->pdo->query($sql)->fetchAll();
     }
 
+
     public function countAll(): int
     {
         return (int) $this->pdo->query('SELECT COUNT(*) FROM books')->fetchColumn();
@@ -75,4 +76,13 @@ class BookRepository
             'cover_color' => $data['cover_color'] !== '' ? $data['cover_color'] : '#8a3d22',
         ]);
     }
+    public function delete(string $id, string $userId): void
+{
+    $sql = "DELETE FROM books WHERE id = :id AND user_id = :user_id";
+    $statement = $this->pdo->prepare($sql);
+    $statement->execute([
+        'id' => $id,
+        'user_id' => $userId,
+    ]);
+}
 }
