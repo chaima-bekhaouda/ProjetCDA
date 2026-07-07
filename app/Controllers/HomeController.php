@@ -14,9 +14,15 @@ class HomeController
         $homeRepository = new HomeRepository($pdo);
 
         $search = trim($_GET['q'] ?? '');
+        $selectedGenre = trim($_GET['genre'] ?? '');
+        $selectedStatus = trim($_GET['status'] ?? '');
 
-        if ($search !== '') {
-            $books = $homeRepository->searchShelfBooks($search);
+        if ($search !== '' || $selectedGenre !== '' || $selectedStatus !== '') {
+            $books = $homeRepository->searchShelfBooks(
+                $search,
+                $selectedGenre,
+                $selectedStatus
+            );
         } else {
             $books = $homeRepository->getShelfBooks();
         }
@@ -27,6 +33,8 @@ class HomeController
             'books' => $books,
             'stats' => $stats,
             'search' => $search,
+            'selectedGenre' => $selectedGenre,
+            'selectedStatus' => $selectedStatus,
         ]);
     }
 }

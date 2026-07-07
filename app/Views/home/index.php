@@ -14,6 +14,8 @@
 $books = $books ?? [];
 $stats = $stats ?? [];
 $search = $search ?? '';
+$selectedGenre = $selectedGenre ?? '';
+$selectedStatus = $selectedStatus ?? '';
 
 $coverMap = [
     "La Maison d'à côté" => "/assets/images/books/la-maison-da-cote.jpeg",
@@ -150,22 +152,44 @@ function bookToneClass(int $index): string
     
 
         <section class="filters-section">
-            <div class="filters-col">
-                <button class="filter-chip active" type="button">Tous</button>
-                <button class="filter-chip" type="button">Roman</button>
-                <button class="filter-chip" type="button">Classique</button>
-                <button class="filter-chip" type="button">SF</button>
-                <button class="filter-chip" type="button">Essai</button>
-            </div>
+    <div class="filters-col">
+    <details class="filter-dropdown">
+        <summary class="filter-chip filter-chip--dropdown">
+            Genre<?= $selectedGenre !== '' ? ' : ' . e($selectedGenre) : '' ?>
+        </summary>
 
-            <div class="filters-col">
-                <button class="filter-chip active" type="button">Tous statuts</button>
-                <button class="filter-chip" type="button">À lire</button>
-                <button class="filter-chip" type="button">En cours</button>
-                <button class="filter-chip" type="button">Terminé</button>
-                <button class="filter-chip" type="button">Prêté</button>
-            </div>
-        </section>
+        <div class="filter-dropdown-menu">
+            <a href="/?q=<?= urlencode($search) ?>&genre=&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === '' ? 'active' : '' ?>">Tous les genres</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Roman&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Roman' ? 'active' : '' ?>">Roman</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Classique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Classique' ? 'active' : '' ?>">Classique</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Thriller&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Thriller' ? 'active' : '' ?>">Thriller</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Policier&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Policier' ? 'active' : '' ?>">Policier</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Science-fiction&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Science-fiction' ? 'active' : '' ?>">Science-fiction</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Fantasy&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Fantasy' ? 'active' : '' ?>">Fantasy</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Fantastique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Fantastique' ? 'active' : '' ?>">Fantastique</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Horreur&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Horreur' ? 'active' : '' ?>">Horreur</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Romance&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Romance' ? 'active' : '' ?>">Romance</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Historique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Historique' ? 'active' : '' ?>">Historique</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Essai&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Essai' ? 'active' : '' ?>">Essai</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Biographie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Biographie' ? 'active' : '' ?>">Biographie</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Autobiographie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Autobiographie' ? 'active' : '' ?>">Autobiographie</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Poésie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Poésie' ? 'active' : '' ?>">Poésie</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Théâtre&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Théâtre' ? 'active' : '' ?>">Théâtre</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=BD&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'BD' ? 'active' : '' ?>">BD</a>
+            <a href="/?q=<?= urlencode($search) ?>&genre=Manga&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Manga' ? 'active' : '' ?>">Manga</a>
+        </div>
+    </details>
+</div>
+
+    <div class="filters-col">
+        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=" class="filter-chip <?= $selectedStatus === '' ? 'active' : '' ?>"> Tous statuts</a>
+        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=to_read"class="filter-chip <?= $selectedStatus === 'to_read' ? 'active' : '' ?>">À lire</a>
+        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=reading"class="filter-chip <?= $selectedStatus === 'reading' ? 'active' : '' ?>">En cours</a>
+        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=finished"class="filter-chip <?= $selectedStatus === 'finished' ? 'active' : '' ?>">Terminé</a>
+        <a href="#"class="filter-chip"onclick="return false;">Prêté
+</a>
+    </div>
+</section>
 <?php if (!empty($search)): ?>
     <div class="search-back-wrap">
         <a href="/" class="search-back-btn">Retour aux étagères</a>

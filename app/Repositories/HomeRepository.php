@@ -57,7 +57,7 @@ class HomeRepository
         'total_pages' => 0,
     ];
 }
-public function searchShelfBooks(string $search): array
+public function searchShelfBooks(string $search = '', string $genre = '', string $status = ''): array
 {
     $sql = "
         SELECT
@@ -74,18 +74,35 @@ public function searchShelfBooks(string $search): array
             created_at,
             updated_at
         FROM books
-        WHERE title ILIKE :search
-           OR author ILIKE :search
-           OR genre ILIKE :search
-        ORDER BY id DESC
-        LIMIT 12
     ";
 
-    $statement = $this->pdo->prepare($sql);
-    $statement->execute([
-        'search' => '%' . $search . '%',
-    ]);
+    $conditions = [];
+    $params = [];
 
-    return $statement->fetchAll();
+    if ($search !== '') {
+        $conditions[] = "(title ILIKE :search OR author ILIKE :search OR genre ILIKE :search)";
+        $params['search'] = '%' . $search . '%';
+    }
+
+    if ($genre !== '') {
+        $conditions[] = "genre = :genre";
+        $params['genre'] = $genre;
+    }
+
+    if ($status !== '') {
+        $conditions[] = "status = :status";
+        $params['status'] = $status;
+    }
+
+    if (!empty($conditions)) {
+        $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
+
+    $sql .= ' ORDER BY id DESC LIMIT 12';
+
+    $statement = $this->pdo->prepare($sql);
+    $statement->execute($params);
+
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
 }
 }
