@@ -57,4 +57,35 @@ class HomeRepository
         'total_pages' => 0,
     ];
 }
+public function searchShelfBooks(string $search): array
+{
+    $sql = "
+        SELECT
+            id,
+            title,
+            author,
+            year,
+            pages,
+            genre,
+            isbn,
+            cover_color,
+            status,
+            notes,
+            created_at,
+            updated_at
+        FROM books
+        WHERE title ILIKE :search
+           OR author ILIKE :search
+           OR genre ILIKE :search
+        ORDER BY id DESC
+        LIMIT 12
+    ";
+
+    $statement = $this->pdo->prepare($sql);
+    $statement->execute([
+        'search' => '%' . $search . '%',
+    ]);
+
+    return $statement->fetchAll();
+}
 }

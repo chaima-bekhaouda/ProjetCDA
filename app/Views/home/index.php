@@ -68,13 +68,14 @@ function bookToneClass(int $index): string
         </div>
 
         <div class="header-center">
-            <form class="home-search" action="/search" method="get">
+            <form class="home-search" action="/" method="get">
                 <input
-                    type="text"
-                    name="q"
-                    class="home-search-input"
-                    placeholder="Chercher un titre, un auteur..."
-                >
+    type="text"
+    name="q"
+    class="home-search-input"
+    placeholder="Chercher un titre, un auteur..."
+    value="<?= e($search ?? '') ?>"
+>
             </form>
         </div>
 

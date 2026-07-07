@@ -13,18 +13,20 @@ class HomeController
         $pdo = Database::connect();
         $homeRepository = new HomeRepository($pdo);
 
-        $books = $homeRepository->getShelfBooks();
-        $stats = [
-    'total_books' => 0,
-    'finished_books' => 0,
-    'reading_books' => 0,
-    'to_read_books' => 0,
-    'total_pages' => 0,
-];
+        $search = trim($_GET['q'] ?? '');
+
+        if ($search !== '') {
+            $books = $homeRepository->searchShelfBooks($search);
+        } else {
+            $books = $homeRepository->getShelfBooks();
+        }
+
+        $stats = $homeRepository->getHomeStats();
 
         Response::view('home/index', [
             'books' => $books,
             'stats' => $stats,
+            'search' => $search,
         ]);
     }
 }
