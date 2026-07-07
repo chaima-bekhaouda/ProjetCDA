@@ -13,6 +13,7 @@
 <?php
 $books = $books ?? [];
 $stats = $stats ?? [];
+$search = $search ?? '';
 
 $coverMap = [
     "La Maison d'à côté" => "/assets/images/books/la-maison-da-cote.jpeg",
@@ -78,6 +79,7 @@ function bookToneClass(int $index): string
 >
             </form>
         </div>
+        
 
         <div class="header-right">
             <?php if (!empty($_SESSION['user']['display_name'])): ?>
@@ -145,6 +147,7 @@ function bookToneClass(int $index): string
                 </div>
             </div>
         </section>
+    
 
         <section class="filters-section">
             <div class="filters-col">
@@ -163,7 +166,11 @@ function bookToneClass(int $index): string
                 <button class="filter-chip" type="button">Prêté</button>
             </div>
         </section>
-
+<?php if (!empty($search)): ?>
+    <div class="search-back-wrap">
+        <a href="/" class="search-back-btn">Retour aux étagères</a>
+    </div>
+<?php endif; ?>
         <section class="library-section">
             <div class="shelf-block">
                 <div class="shelf-row shelf-row--covers">
@@ -284,6 +291,7 @@ function bookToneClass(int $index): string
                 <div class="shelf-plank"></div>
             </div>
         </section>
+    
     </main>
 </div>
 
