@@ -16,6 +16,21 @@ $stats = $stats ?? [];
 $search = $search ?? '';
 $selectedGenre = $selectedGenre ?? '';
 $selectedStatus = $selectedStatus ?? '';
+$readingBooks = array_values(array_filter(
+    $books,
+    fn(array $book): bool => ($book['status'] ?? '') === 'reading'
+));
+
+$otherBooks = array_values(array_filter(
+    $books,
+    fn(array $book): bool => ($book['status'] ?? '') !== 'reading'
+));
+
+$splitIndex = (int) ceil(count($otherBooks) / 2);
+
+$shelfTwoBooks = array_slice($otherBooks, 0, $splitIndex);
+$shelfThreeBooks = array_slice($otherBooks, $splitIndex);
+
 
 $coverMap = [
     "La Maison d'à côté" => "/assets/images/books/la-maison-da-cote.jpeg",
@@ -186,8 +201,7 @@ function bookToneClass(int $index): string
         <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=to_read"class="filter-chip <?= $selectedStatus === 'to_read' ? 'active' : '' ?>">À lire</a>
         <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=reading"class="filter-chip <?= $selectedStatus === 'reading' ? 'active' : '' ?>">En cours</a>
         <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=finished"class="filter-chip <?= $selectedStatus === 'finished' ? 'active' : '' ?>">Terminé</a>
-        <a href="#"class="filter-chip"onclick="return false;">Prêté
-</a>
+        <a href="#"class="filter-chip"onclick="return false;">Prêté</a>
     </div>
 </section>
 <?php if (!empty($search)): ?>
@@ -198,7 +212,7 @@ function bookToneClass(int $index): string
         <section class="library-section">
             <div class="shelf-block">
                 <div class="shelf-row shelf-row--covers">
-                    <?php foreach ($books as $index => $book): ?>
+                    <?php foreach ($readingBooks as $index => $book): ?>
                         <?php
                         $bookId = e($book['id']);
                         $title = e($book['title']);
@@ -232,7 +246,7 @@ function bookToneClass(int $index): string
                 <div class="shelf-plank"></div>
 
                 <div class="shelf-row shelf-row--spines">
-                    <?php foreach ($books as $index => $book): ?>
+                    <?php foreach ($shelfTwoBooks as $index => $book): ?>
                         <?php
                         $bookId = e($book['id']);
                         $title = e($book['title']);
@@ -273,7 +287,7 @@ function bookToneClass(int $index): string
                         <img src="/assets/images/books/plant.png" alt="" aria-hidden="true">
                     </div>
 
-                    <?php foreach ($books as $index => $book): ?>
+                    <?php foreach ($shelfThreeBooks as $index => $book): ?>
                         <?php
                         $bookId = e($book['id']);
                         $title = e($book['title']);
