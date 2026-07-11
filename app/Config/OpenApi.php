@@ -5,13 +5,19 @@ namespace App\Config;
 use OpenApi\Annotations as OA;
 
 /**
- * @OA\Info(
+ * @OA\OpenApi(
+ *   @OA\Info(
  *     title="BookNest API",
- *     version="1.0.0"
- * )
- *
- * @OA\Server(
- *     url="http://localhost:8000"
+ *     version="1.0.0",
+ *     description="API de gestion de bibliothèque personnelle"
+ *   ),
+ *   @OA\Server(url="http://localhost:8000"),
+ *   @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ *   )
  * )
  */
 class OpenApi

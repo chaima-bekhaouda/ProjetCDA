@@ -31,4 +31,19 @@ class Router
         http_response_code(404);
         echo '404 - Page not found';
     }
+
+    public function dispatch(string $uri, string $method): void
+    {
+        $uri = parse_url($uri, PHP_URL_PATH) ?? '/';
+
+        foreach ($this->routes[$method] ?? [] as $path => $callback) {
+            if ($path === $uri) {
+                $callback();
+                return;
+            }
+        }
+
+        http_response_code(404);
+        echo '404 - Page not found';
+    }
 }
