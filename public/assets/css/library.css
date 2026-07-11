@@ -1,0 +1,179 @@
+/* La page /library réutilise home.css pour le header, mais home.css
+   suppose un contexte sombre (texte clair) — on force ici des couleurs
+   explicites pour les cartes blanches, et on retire les contraintes de
+   largeur héritées pour occuper tout l'espace disponible. */
+
+.library-page .home-shell,
+.library-page .home-main {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+}
+
+.library-intro {
+    padding: 28px 32px 8px;
+    color: #e9e4d8;
+}
+
+.library-intro h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    margin: 0 0 6px;
+    color: #f5f1e6;
+}
+
+.library-intro p {
+    color: #b9b3a4;
+    margin: 0;
+}
+
+.library-banner {
+    margin-top: 14px;
+    display: inline-block;
+    background: #2f4a3a;
+    color: #d8f0e0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    padding: 20px 32px 48px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.library-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #b9b3a4;
+    padding: 40px 0;
+}
+
+.library-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.library-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.library-card__cover {
+    aspect-ratio: 2 / 3;
+    background: #f0ede6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.library-card__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.library-card__cover-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e4ddcf, #cfc4ab);
+}
+
+.library-card__body {
+    padding: 12px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    color: #2b2926;
+}
+
+.library-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.35;
+    color: #2b2926;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.library-card__author {
+    font-size: 12.5px;
+    color: #6b6b68;
+    margin: 0;
+}
+
+.library-card__meta {
+    font-size: 11.5px;
+    color: #9a9890;
+    margin: 0;
+}
+
+.library-card__actions {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.library-card__actions form {
+    margin: 0;
+}
+
+.library-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #d8d2c2;
+    background: #fff;
+    color: #4a4740;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1.3;
+}
+
+.library-btn:hover {
+    background: #f5f2ea;
+}
+
+.library-btn--primary {
+    background: #c98a4b;
+    border-color: #c98a4b;
+    color: #fff;
+}
+
+.library-btn--primary:hover {
+    background: #b87a3d;
+}
+
+/* Responsive : plus de colonnes sur grand écran, moins sur mobile */
+@media (max-width: 640px) {
+    .library-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        padding: 16px;
+        gap: 14px;
+    }
+
+    .library-intro {
+        padding: 20px 16px 4px;
+    }
+}
