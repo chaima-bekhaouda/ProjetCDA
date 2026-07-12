@@ -79,7 +79,11 @@
                                     <button type="submit" class="library-btn library-btn--primary">+ Ajouter à mes étagères</button>
                                 </form>
 
-                                <a href="/library/read?volume_id=<?= urlencode($book['volume_id']) ?>" class="library-btn">Lire</a>
+                                <?php if (!empty($book['embeddable'])): ?>
+                                    <a href="/library/read?volume_id=<?= urlencode($book['volume_id']) ?>" class="library-btn">Lire</a>
+                                <?php else: ?>
+                                    <p class="library-card__note">Texte intégral non disponible pour ce titre.</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </article>
