@@ -8,7 +8,7 @@ class BookRepository
 {
     public function __construct(private PDO $pdo) {}
 
-    public function all(): array
+    public function all(?string $userId = null): array
     {
         $sql = "
             SELECT
@@ -22,13 +22,27 @@ class BookRepository
                 status,
                 notes,
                 cover_color,
+                cover_path,
                 created_at,
                 updated_at
             FROM books
-            ORDER BY id DESC
         ";
 
-        return $this->pdo->query($sql)->fetchAll();
+        if (!empty($userId)) {
+            $sql .= " WHERE user_id = :user_id ";
+        }
+
+        $sql .= " ORDER BY id DESC ";
+
+        $statement = $this->pdo->prepare($sql);
+
+        if (!empty($userId)) {
+            $statement->bindValue(':user_id', $userId);
+        }
+
+        $statement->execute();
+
+        return $statement->fetchAll();
     }
 
 
@@ -49,7 +63,8 @@ class BookRepository
                 genre,
                 status,
                 notes,
-                cover_color
+                cover_color,
+                cover_path
             ) VALUES (
                 :user_id,
                 :title,
@@ -59,7 +74,8 @@ class BookRepository
                 :genre,
                 :status,
                 :notes,
-                :cover_color
+                :cover_color,
+                :cover_path
             )
         ";
 
@@ -74,15 +90,59 @@ class BookRepository
             'status' => $data['status'],
             'notes' => $data['notes'] !== '' ? $data['notes'] : null,
             'cover_color' => $data['cover_color'] !== '' ? $data['cover_color'] : '#8a3d22',
+            'cover_path' => $data['cover_path'] ?? null,
         ]);
     }
-    public function delete(string $id, string $userId): void
-{
-    $sql = "DELETE FROM books WHERE id = :id AND user_id = :user_id";
-    $statement = $this->pdo->prepare($sql);
-    $statement->execute([
-        'id' => $id,
-        'user_id' => $userId,
-    ]);
-}
+    public function delete(string $id, ?string $userId = null): bool
+    {
+        // supprime la ligne et le fichier de couverture associé si présent
+        $statement = $this->pdo->prepare('SELECT cover_path FROM books WHERE id = :id LIMIT 1');
+        $statement->execute(['id' => $id]);
+        $book = $statement->fetch(PDO::FETCH_ASSOC);
+
+        $coverPath = $book['cover_path'] ?? null;
+
+        $sql = 'DELETE FROM books WHERE id = :id';
+        $params = ['id' => $id];
+
+        if ($userId !== null && $userId !== '') {
+            $sql .= ' AND (user_id IS NULL OR user_id = :user_id)';
+            $params['user_id'] = $userId;
+        }
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($params);
+
+        if ($coverPath !== null && $coverPath !== '') {
+            $relative = ltrim($coverPath, '/');
+            $absolutePath = __DIR__ . '/../../public/' . $relative;
+            if (is_file($absolutePath)) {
+                @unlink($absolutePath);
+            }
+        }
+
+        return $statement->rowCount() > 0;
+    }
+
+    public function updateStatus(string $id, string $status, ?string $userId = null): bool
+    {
+        // met à jour uniquement le statut du livre
+        $allowed = ['to_read', 'reading', 'finished'];
+        if (!in_array($status, $allowed, true)) {
+            return false;
+        }
+
+        $sql = 'UPDATE books SET status = :status, updated_at = CURRENT_TIMESTAMP WHERE id = :id';
+        $params = ['id' => $id, 'status' => $status];
+
+        if ($userId !== null && $userId !== '') {
+            $sql .= ' AND (user_id IS NULL OR user_id = :user_id)';
+            $params['user_id'] = $userId;
+        }
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($params);
+
+        return $statement->rowCount() > 0;
+    }
 }

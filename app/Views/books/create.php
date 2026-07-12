@@ -33,7 +33,20 @@ function e($value): string
                 Remplissez les détails, choisissez la couleur de la tranche, et déposez-le sur le rayon.
             </p>
 
-            <form action="/books" method="post" class="book-form">
+            <form action="/books" method="post" enctype="multipart/form-data" class="book-form">
+                <div class="form-field form-field--full">
+                    <label for="cover">Couverture</label>
+                    <input
+                        id="cover"
+                        name="cover"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                    >
+                    <?php if (!empty($errors['cover'])): ?>
+                        <small class="field-error"><?= e($errors['cover']) ?></small>
+                    <?php endif; ?>
+                </div>
+
                 <div class="form-grid">
                     <div class="form-field">
                         <label for="title">Titre *</label>

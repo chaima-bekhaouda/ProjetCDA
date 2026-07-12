@@ -14,7 +14,10 @@ $active = $active ?? '';
 <div class="app-layout">
 
     <section class="content">
-        <?php require $view; ?>
+        <?php
+            $viewPath = __DIR__ . '/../' . ltrim($view, '/');
+            require $viewPath . '.php';
+        ?>
     </section>
 </div>
 </body>

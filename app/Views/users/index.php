@@ -1,5 +1,4 @@
-<?php
-$title = 'Utilisateurs | BookNest';
-$active = 'users';
-$view = __DIR__ . '/../users/content.php';
-require __DIR__ . '/../layouts/main.php';
+<section class="page-panel">
+    <h1>Utilisateurs</h1>
+    <p>Cette vue permet d’afficher les profils utilisateurs et leurs permissions.</p>
+</section>

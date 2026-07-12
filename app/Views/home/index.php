@@ -54,8 +54,15 @@ function e($value): string
 
 function bookCoverPath(array $book, array $coverMap): string
 {
+    $coverPath = trim((string) ($book['cover_path'] ?? ''));
+
+    if ($coverPath !== '') {
+        return $coverPath;
+    }
+
     $title = $book['title'] ?? '';
-    return $coverMap[$title] ?? '/assets/images/books/la-maison-da-cote.jpeg';
+
+    return $coverMap[$title] ?? '';
 }
 
 function bookStatusLabel(string $status, array $statusLabelMap): string
@@ -125,6 +132,7 @@ function bookToneClass(int $index): string
 <?php endif; ?>
 
             <a class="action-btn add-btn" href="/books/create">+ Ajouter</a>
+            <a class="action-btn" href="/library">Liste de livres</a>
         </div>
     </header>
 
@@ -137,8 +145,7 @@ function bookToneClass(int $index): string
                     <em>Chaque histoire, son étagère.</em>
                 </h2>
                 <p>
-                    Parcourez votre collection comme une vraie bibliothèque.
-                    Cliquez sur un livre pour ouvrir la fiche et le supprimer si besoin.
+                    Explorez votre collection comme dans une bibliothèque ancienne, avec des étagères bien organisées et des livres marqués selon leur statut.
                 </p>
             </div>
 
@@ -157,51 +164,51 @@ function bookToneClass(int $index): string
                     <span class="stat-number"><?= (int) ($stats['reading_books'] ?? 0) ?></span>
                     <span class="stat-label">EN COURS</span>
                 </div>
-
-                <div class="stat-card">
-                    <span class="stat-number"><?= (int) ($stats['total_pages'] ?? 0) ?></span>
-                    <span class="stat-label">PAGES LUES</span>
-                </div>
             </div>
         </section>
     
 
         <section class="filters-section">
     <div class="filters-col">
-    <details class="filter-dropdown">
-        <summary class="filter-chip filter-chip--dropdown">
-            Genre<?= $selectedGenre !== '' ? ' : ' . e($selectedGenre) : '' ?>
-        </summary>
-
-        <div class="filter-dropdown-menu">
-            <a href="/?q=<?= urlencode($search) ?>&genre=&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === '' ? 'active' : '' ?>">Tous les genres</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Roman&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Roman' ? 'active' : '' ?>">Roman</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Classique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Classique' ? 'active' : '' ?>">Classique</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Thriller&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Thriller' ? 'active' : '' ?>">Thriller</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Policier&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Policier' ? 'active' : '' ?>">Policier</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Science-fiction&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Science-fiction' ? 'active' : '' ?>">Science-fiction</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Fantasy&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Fantasy' ? 'active' : '' ?>">Fantasy</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Fantastique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Fantastique' ? 'active' : '' ?>">Fantastique</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Horreur&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Horreur' ? 'active' : '' ?>">Horreur</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Romance&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Romance' ? 'active' : '' ?>">Romance</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Historique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Historique' ? 'active' : '' ?>">Historique</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Essai&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Essai' ? 'active' : '' ?>">Essai</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Biographie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Biographie' ? 'active' : '' ?>">Biographie</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Autobiographie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Autobiographie' ? 'active' : '' ?>">Autobiographie</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Poésie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Poésie' ? 'active' : '' ?>">Poésie</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Théâtre&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Théâtre' ? 'active' : '' ?>">Théâtre</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=BD&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'BD' ? 'active' : '' ?>">BD</a>
-            <a href="/?q=<?= urlencode($search) ?>&genre=Manga&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Manga' ? 'active' : '' ?>">Manga</a>
-        </div>
-    </details>
-</div>
+        <details class="filter-dropdown">
+            <summary class="filter-chip filter-chip--dropdown">
+                Genre<?= $selectedGenre !== '' ? ' : ' . e($selectedGenre) : '' ?>
+            </summary>
+            <div class="filter-dropdown-menu">
+                <a href="/?q=<?= urlencode($search) ?>&genre=&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === '' ? 'active' : '' ?>">Tous les genres</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Roman&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Roman' ? 'active' : '' ?>">Roman</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Classique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Classique' ? 'active' : '' ?>">Classique</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Thriller&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Thriller' ? 'active' : '' ?>">Thriller</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Policier&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Policier' ? 'active' : '' ?>">Policier</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Science-fiction&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Science-fiction' ? 'active' : '' ?>">Science-fiction</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Fantasy&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Fantasy' ? 'active' : '' ?>">Fantasy</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Fantastique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Fantastique' ? 'active' : '' ?>">Fantastique</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Horreur&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Horreur' ? 'active' : '' ?>">Horreur</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Romance&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Romance' ? 'active' : '' ?>">Romance</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Historique&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Historique' ? 'active' : '' ?>">Historique</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Essai&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Essai' ? 'active' : '' ?>">Essai</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Biographie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Biographie' ? 'active' : '' ?>">Biographie</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Autobiographie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Autobiographie' ? 'active' : '' ?>">Autobiographie</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Poésie&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Poésie' ? 'active' : '' ?>">Poésie</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Théâtre&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Théâtre' ? 'active' : '' ?>">Théâtre</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=BD&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'BD' ? 'active' : '' ?>">BD</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=Manga&status=<?= urlencode($selectedStatus) ?>" class="filter-dropdown-item <?= $selectedGenre === 'Manga' ? 'active' : '' ?>">Manga</a>
+            </div>
+        </details>
+    </div>
 
     <div class="filters-col">
-        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=" class="filter-chip <?= $selectedStatus === '' ? 'active' : '' ?>"> Tous statuts</a>
-        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=to_read"class="filter-chip <?= $selectedStatus === 'to_read' ? 'active' : '' ?>">À lire</a>
-        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=reading"class="filter-chip <?= $selectedStatus === 'reading' ? 'active' : '' ?>">En cours</a>
-        <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=finished"class="filter-chip <?= $selectedStatus === 'finished' ? 'active' : '' ?>">Terminé</a>
-        <a href="#"class="filter-chip"onclick="return false;">Prêté</a>
+        <details class="filter-dropdown">
+            <summary class="filter-chip filter-chip--dropdown">
+                Status<?= $selectedStatus !== '' ? ' : ' . e($selectedStatus === 'to_read' ? 'À lire' : ($selectedStatus === 'reading' ? 'En cours' : ($selectedStatus === 'finished' ? 'Terminé' : $selectedStatus))) : '' ?>
+            </summary>
+            <div class="filter-dropdown-menu">
+                <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=" class="filter-dropdown-item <?= $selectedStatus === '' ? 'active' : '' ?>">Tous statuts</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=to_read" class="filter-dropdown-item <?= $selectedStatus === 'to_read' ? 'active' : '' ?>">À lire</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=reading" class="filter-dropdown-item <?= $selectedStatus === 'reading' ? 'active' : '' ?>">En cours</a>
+                <a href="/?q=<?= urlencode($search) ?>&genre=<?= urlencode($selectedGenre) ?>&status=finished" class="filter-dropdown-item <?= $selectedStatus === 'finished' ? 'active' : '' ?>">Terminé</a>
+            </div>
+        </details>
     </div>
 </section>
 <?php if (!empty($search)): ?>
@@ -210,125 +217,73 @@ function bookToneClass(int $index): string
     </div>
 <?php endif; ?>
         <section class="library-section">
-            <div class="shelf-block">
-                <div class="shelf-row shelf-row--covers">
-                    <?php foreach ($readingBooks as $index => $book): ?>
-                        <?php
-                        $bookId = e($book['id']);
-                        $title = e($book['title']);
-                        $author = e($book['author']);
-                        $year = e($book['year']);
-                        $genre = e($book['genre']);
-                        $pages = e($book['pages']);
-                        $statusRaw = (string) ($book['status'] ?? '');
-                        $statusLabel = e(bookStatusLabel($statusRaw, $statusLabelMap));
-                        $quote = e($book['notes'] ?? '');
-                        $cover = e(bookCoverPath($book, $coverMap));
-                        ?>
-                        <button
-                            type="button"
-                            class="cover-book trigger-book-modal"
-                            data-id="<?= $bookId ?>"
-                            data-title="<?= $title ?>"
-                            data-author="<?= $author ?>"
-                            data-year="<?= $year ?>"
-                            data-genre="<?= $genre ?>"
-                            data-pages="<?= $pages ?>"
-                            data-status="<?= $statusLabel ?>"
-                            data-quote="<?= $quote ?>"
-                            data-cover="<?= $cover ?>"
-                        >
-                            <img src="<?= $cover ?>" alt="<?= $title ?>">
-                        </button>
-                    <?php endforeach; ?>
-                </div>
+    <div class="shelf-block">
+        <div class="shelf-row shelf-row--covers<?= empty($shelfTwoBooks) ? ' shelf-row--empty' : '' ?>">
+            <?php foreach ($shelfTwoBooks as $index => $book): ?>
+                <?php $cover = bookCoverPath($book, $coverMap); ?>
+                <button
+                    type="button"
+                    class="trigger-book-modal cover-book"
+                    data-id="<?= e($book['id'] ?? '') ?>"
+                    data-title="<?= e($book['title'] ?? '') ?>"
+                    data-author="<?= e($book['author'] ?? '') ?>"
+                    data-year="<?= e($book['year'] ?? '') ?>"
+                    data-genre="<?= e($book['genre'] ?? '') ?>"
+                    data-pages="<?= e($book['pages'] ?? '') ?>"
+                    data-status-value="<?= e($book['status'] ?? '') ?>"
+                    data-status="<?= e(bookStatusLabel($book['status'] ?? '', $statusLabelMap)) ?>"
+                    data-quote="<?= e($book['notes'] ?? '') ?>"
+                    data-cover="<?= e($cover) ?>"
+                >
+                    <?php if ($cover !== ''): ?>
+                        <img src="<?= e($cover) ?>" alt="<?= e($book['title'] ?? '') ?>" loading="lazy">
+                    <?php else: ?>
+                        <span
+                            class="cover-book-fallback"
+                            style="background: linear-gradient(160deg, <?= e($book['cover_color'] ?? '#8a3d22') ?> 0%, #241109 100%);"
+                        ><?= e($book['title'] ?? '') ?></span>
+                    <?php endif; ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+        <div class="shelf-plank"></div>
 
-                <div class="shelf-plank"></div>
+        <div class="shelf-row shelf-row--spines<?= empty($shelfThreeBooks) ? ' shelf-row--empty' : '' ?>">
+            <?php foreach ($shelfThreeBooks as $index => $book): ?>
+                <button
+                    type="button"
+                    class="trigger-book-modal spine-book<?= $index % 2 === 0 ? ' tall' : '' ?>"
+                    style="background: <?= e($book['cover_color'] ?? '#8a3d22') ?>;"
+                    data-id="<?= e($book['id'] ?? '') ?>"
+                    data-title="<?= e($book['title'] ?? '') ?>"
+                    data-author="<?= e($book['author'] ?? '') ?>"
+                    data-year="<?= e($book['year'] ?? '') ?>"
+                    data-genre="<?= e($book['genre'] ?? '') ?>"
+                    data-pages="<?= e($book['pages'] ?? '') ?>"
+                    data-status-value="<?= e($book['status'] ?? '') ?>"
+                    data-status="<?= e(bookStatusLabel($book['status'] ?? '', $statusLabelMap)) ?>"
+                    data-quote="<?= e($book['notes'] ?? '') ?>"
+                    data-cover="<?= e(bookCoverPath($book, $coverMap)) ?>"
+                >
+                    <span class="spine-book-title"><?= e($book['title'] ?? '') ?></span>
+                </button>
+            <?php endforeach; ?>
+        </div>
+        <div class="shelf-plank"></div>
 
-                <div class="shelf-row shelf-row--spines">
-                    <?php foreach ($shelfTwoBooks as $index => $book): ?>
-                        <?php
-                        $bookId = e($book['id']);
-                        $title = e($book['title']);
-                        $author = e($book['author']);
-                        $year = e($book['year']);
-                        $genre = e($book['genre']);
-                        $pages = e($book['pages']);
-                        $statusRaw = (string) ($book['status'] ?? '');
-                        $statusLabel = e(bookStatusLabel($statusRaw, $statusLabelMap));
-                        $quote = e($book['notes'] ?? '');
-                        $cover = e(bookCoverPath($book, $coverMap));
-                        $coverColor = e($book['cover_color'] ?? '#5c3b2e');
-                        $tone = bookToneClass($index);
-                        ?>
-                        <button
-                            type="button"
-                            class="spine-book trigger-book-modal <?= $tone ?>"
-                            data-id="<?= $bookId ?>"
-                            data-title="<?= $title ?>"
-                            data-author="<?= $author ?>"
-                            data-year="<?= $year ?>"
-                            data-genre="<?= $genre ?>"
-                            data-pages="<?= $pages ?>"
-                            data-status="<?= $statusLabel ?>"
-                            data-quote="<?= $quote ?>"
-                            data-cover="<?= $cover ?>"
-                            style="background: linear-gradient(180deg, <?= $coverColor ?> 0%, #241109 100%);"
-                        >
-                            <span><?= $title ?></span>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="shelf-plank"></div>
-
-                <div class="shelf-row shelf-row--decor">
-                    <div class="decor-book decor-book--plant">
-                        <img src="/assets/images/books/plant.png" alt="" aria-hidden="true">
-                    </div>
-
-                    <?php foreach ($shelfThreeBooks as $index => $book): ?>
-                        <?php
-                        $bookId = e($book['id']);
-                        $title = e($book['title']);
-                        $author = e($book['author']);
-                        $year = e($book['year']);
-                        $genre = e($book['genre']);
-                        $pages = e($book['pages']);
-                        $statusRaw = (string) ($book['status'] ?? '');
-                        $statusLabel = e(bookStatusLabel($statusRaw, $statusLabelMap));
-                        $quote = e($book['notes'] ?? '');
-                        $cover = e(bookCoverPath($book, $coverMap));
-                        $coverColor = e($book['cover_color'] ?? '#5c3b2e');
-                        $tone = bookToneClass($index + 1);
-                        $tallClass = $index % 2 === 0 ? 'tall' : '';
-                        ?>
-                        <button
-                            type="button"
-                            class="spine-book trigger-book-modal <?= $tallClass ?> <?= $tone ?>"
-                            data-id="<?= $bookId ?>"
-                            data-title="<?= $title ?>"
-                            data-author="<?= $author ?>"
-                            data-year="<?= $year ?>"
-                            data-genre="<?= $genre ?>"
-                            data-pages="<?= $pages ?>"
-                            data-status="<?= $statusLabel ?>"
-                            data-quote="<?= $quote ?>"
-                            data-cover="<?= $cover ?>"
-                            style="background: linear-gradient(180deg, <?= $coverColor ?> 0%, #241109 100%);"
-                        >
-                            <span><?= $title ?></span>
-                        </button>
-                    <?php endforeach; ?>
-
-                    <div class="decor-book decor-book--globe">
-                        <img src="/assets/images/books/globe.png" alt="" aria-hidden="true">
-                    </div>
-                </div>
-
-                <div class="shelf-plank"></div>
+        <div class="shelf-row shelf-row--decor shelf-row--empty">
+            <div class="decor-book decor-book--plant">
+                <img src="/assets/images/books/plant.png" alt="" aria-hidden="true">
             </div>
-        </section>
+
+            <div class="decor-book decor-book--globe">
+                <img src="/assets/images/books/globe.png" alt="" aria-hidden="true">
+            </div>
+        </div>
+
+        <div class="shelf-plank"></div>
+    </div>
+</section>
     
     </main>
 </div>
@@ -363,8 +318,19 @@ function bookToneClass(int $index): string
                 <blockquote id="book-modal-quote" class="book-modal__quote"></blockquote>
 
                 <div class="book-modal__actions">
+                    <input type="hidden" name="book_id" id="book-modal-id" value="">
+
+                    <form action="/books/update-status" method="post" class="status-change-form">
+                        <label for="book-modal-status-select" class="visually-hidden">Statut</label>
+                        <select id="book-modal-status-select" name="status" class="status-select">
+                            <option value="to_read">À lire</option>
+                            <option value="reading">En cours</option>
+                            <option value="finished">Terminé</option>
+                        </select>
+                        <button type="submit" class="modal-action modal-action--primary">Changer le statut</button>
+                    </form>
+
                     <form action="/books/delete" method="post" class="delete-book-form">
-                        <input type="hidden" name="book_id" id="book-modal-id" value="">
                         <button type="submit" class="modal-action modal-action--danger">Supprimer</button>
                     </form>
                 </div>
@@ -385,6 +351,9 @@ const modalMeta = document.getElementById('book-modal-meta');
 const modalGenre = document.getElementById('book-modal-genre');
 const modalPages = document.getElementById('book-modal-pages');
 const modalQuote = document.getElementById('book-modal-quote');
+const statusSelect = document.getElementById('book-modal-status-select');
+const statusForm = document.querySelector('.status-change-form');
+const deleteForm = document.querySelector('.delete-book-form');
 
 document.querySelectorAll('.trigger-book-modal').forEach((button) => {
     button.addEventListener('click', () => {
@@ -404,7 +373,10 @@ document.querySelectorAll('.trigger-book-modal').forEach((button) => {
 
         modalCover.src = cover;
         modalCover.alt = title;
-        modalStatus.textContent = status;
+        modalStatus.textContent = button.dataset.status || status;
+        if (statusSelect) {
+            statusSelect.value = button.dataset.statusValue || '';
+        }
         modalTitle.textContent = title;
         modalMeta.textContent = `${author} · ${year}`;
         modalGenre.textContent = genre;
@@ -422,6 +394,25 @@ if (modalCloseBtn) {
         bookModal.close();
     });
 }
+
+// Ensure the book_id is submitted with each form (hidden input appended on submit)
+function attachBookIdOnSubmit(form) {
+    if (!form) return;
+    form.addEventListener('submit', (ev) => {
+        // remove previous if any
+        const prev = form.querySelector('input[name="book_id"]');
+        if (prev) prev.remove();
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'book_id';
+        input.value = modalBookId ? modalBookId.value : '';
+        form.appendChild(input);
+    });
+}
+
+attachBookIdOnSubmit(statusForm);
+attachBookIdOnSubmit(deleteForm);
 
 if (bookModal) {
     bookModal.addEventListener('click', (event) => {
