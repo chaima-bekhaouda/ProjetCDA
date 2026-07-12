@@ -7,3 +7,7 @@ app copy/
 .phpunit.result.cache
 tests-results.txt
 .env
+!public/uploads/books/.gitkeep
+!public/uploads/books/
+public/uploads/books/*
+!public/uploads/books/.gitkeep
