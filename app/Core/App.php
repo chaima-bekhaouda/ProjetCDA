@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\JwtService;
 use Dotenv\Dotenv;
 use App\Controllers\LibraryController;
+use App\Controllers\LoanController;
 
 class App
 {
@@ -29,6 +30,7 @@ class App
         $books = new BookController();
         $auth = new AuthController();
         $library = new LibraryController();
+        $loans = new LoanController();
 
         $this->router->get('/', [$home, 'index']);
         $this->router->get('/dashboard', [$dashboard, 'index']);
@@ -50,6 +52,11 @@ class App
         $this->router->post('/logout', [$auth, 'logout']);
         $this->router->get('/library', [$library, 'index']);
         $this->router->post('/library/add', [$library, 'add']);
+        $this->router->get('/library/read', [$library, 'read']);
+        $this->router->post('/library/read/end', [$library, 'endSession']);
+        $this->router->post('/loans/create', [$loans, 'store']);
+        $this->router->post('/loans/return', [$loans, 'returnLoan']);
+        
 
         $this->router->get('/db-test', static function (): void {
             $pdo = Database::connect();
@@ -69,6 +76,10 @@ class App
             '/users',
             '/library',
             '/library/add',
+            '/library/read',
+            '/library/read/end',
+            '/loans/create',
+            '/loans/return',
         ];
 
         $this->middleware[] = new AuthenticateMiddleware($protectedPaths);

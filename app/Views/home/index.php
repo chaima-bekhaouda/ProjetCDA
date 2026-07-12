@@ -218,8 +218,8 @@ function bookToneClass(int $index): string
 <?php endif; ?>
         <section class="library-section">
     <div class="shelf-block">
-        <div class="shelf-row shelf-row--covers<?= empty($shelfTwoBooks) ? ' shelf-row--empty' : '' ?>">
-            <?php foreach ($shelfTwoBooks as $index => $book): ?>
+        <div class="shelf-row shelf-row--covers<?= empty($readingBooks) ? ' shelf-row--empty' : '' ?>">
+            <?php foreach ($readingBooks as $index => $book): ?>
                 <?php $cover = bookCoverPath($book, $coverMap); ?>
                 <button
                     type="button"
@@ -248,7 +248,8 @@ function bookToneClass(int $index): string
         </div>
         <div class="shelf-plank"></div>
 
-        <div class="shelf-row shelf-row--spines<?= empty($shelfThreeBooks) ? ' shelf-row--empty' : '' ?>">
+        <div class="shelf-row shelf-row--covers<?= empty($shelfTwoBooks) ? ' shelf-row--empty' : '' ?>">
+
             <?php foreach ($shelfThreeBooks as $index => $book): ?>
                 <button
                     type="button"
@@ -264,6 +265,7 @@ function bookToneClass(int $index): string
                     data-status="<?= e(bookStatusLabel($book['status'] ?? '', $statusLabelMap)) ?>"
                     data-quote="<?= e($book['notes'] ?? '') ?>"
                     data-cover="<?= e(bookCoverPath($book, $coverMap)) ?>"
+                    data-volume-id="<?= e($book['google_volume_id'] ?? '') ?>"
                 >
                     <span class="spine-book-title"><?= e($book['title'] ?? '') ?></span>
                 </button>
@@ -331,8 +333,18 @@ function bookToneClass(int $index): string
                     </form>
 
                     <form action="/books/delete" method="post" class="delete-book-form">
-                        <button type="submit" class="modal-action modal-action--danger">Supprimer</button>
-                    </form>
+        <button type="submit" class="modal-action modal-action--danger">Supprimer</button>
+    </form>
+
+    <form action="/loans/create" method="post" class="loan-form">
+        <label for="book-modal-borrower" class="visually-hidden">Emprunteur</label>
+        <input type="text" name="borrower" id="book-modal-borrower" placeholder="Nom de l'emprunteur" required>
+        <button type="submit" class="modal-action">Marquer comme prêté</button>
+    </form>
+
+    <a href="#" id="book-modal-read" class="modal-action" style="display:none;">Lire</a>
+</div>
+</div>
                 </div>
             </div>
         </div>
@@ -354,6 +366,8 @@ const modalQuote = document.getElementById('book-modal-quote');
 const statusSelect = document.getElementById('book-modal-status-select');
 const statusForm = document.querySelector('.status-change-form');
 const deleteForm = document.querySelector('.delete-book-form');
+const loanForm = document.querySelector('.loan-form');
+const readLink = document.getElementById('book-modal-read');
 
 document.querySelectorAll('.trigger-book-modal').forEach((button) => {
     button.addEventListener('click', () => {
@@ -382,6 +396,16 @@ document.querySelectorAll('.trigger-book-modal').forEach((button) => {
         modalGenre.textContent = genre;
         modalPages.textContent = pages;
         modalQuote.textContent = quote ? `« ${quote} »` : '';
+
+        const volumeId = button.dataset.volumeId || '';
+        if (readLink) {
+            if (volumeId !== '') {
+                readLink.href = '/library/read?volume_id=' + encodeURIComponent(volumeId);
+                readLink.style.display = '';
+            } else {
+                readLink.style.display = 'none';
+            }
+        }
 
         if (bookModal) {
             bookModal.showModal();
@@ -413,6 +437,7 @@ function attachBookIdOnSubmit(form) {
 
 attachBookIdOnSubmit(statusForm);
 attachBookIdOnSubmit(deleteForm);
+attachBookIdOnSubmit(loanForm);
 
 if (bookModal) {
     bookModal.addEventListener('click', (event) => {
