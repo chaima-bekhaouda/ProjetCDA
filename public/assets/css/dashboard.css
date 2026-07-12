@@ -511,6 +511,13 @@ a {
   border: 1px solid rgba(152, 118, 78, 0.18);
   color: var(--muted);
 }
+.loan-return-form {
+    margin-top: 12px;
+}
+
+.loan-return-form button {
+    width: 100%;
+}
 
 @media (max-width: 1280px) {
   .dashboard {

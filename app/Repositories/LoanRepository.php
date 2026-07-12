@@ -18,6 +18,7 @@ class LoanRepository
         $sql = "
             SELECT
                 l.id,
+                l.book_id,
                 l.borrower,
                 l.lent_at,
                 l.returned_at,
