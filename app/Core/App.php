@@ -39,9 +39,7 @@ class App
         $this->router->post('/books', [$books, 'store']);
         $this->router->post('/books/delete', [$books, 'delete']);
         $this->router->post('/books/update-status', [$books, 'updateStatus']);
-        $this->router->get('/authors', [$dashboard, 'authors']);
         $this->router->get('/loans', [$dashboard, 'loans']);
-        $this->router->get('/reading-sessions', [$dashboard, 'sessions']);
         $this->router->get('/users', [$dashboard, 'users']);
 
         $this->router->get('/login', [$auth, 'loginForm']);
@@ -60,11 +58,7 @@ class App
         $this->router->post('/shelves/remove', [$home, 'removeShelf']);
         
 
-        $this->router->get('/db-test', static function (): void {
-            $pdo = Database::connect();
-            $result = $pdo->query('SELECT 1 AS ok')->fetch();
-            echo json_encode($result);
-        });
+        $this->router->get('/db-test', [$home, 'dbTest']);
 
         $protectedPaths = [
             '/dashboard',
@@ -72,9 +66,7 @@ class App
             '/books/create',
             '/books/delete',
             '/books/update-status',
-            '/authors',
             '/loans',
-            '/reading-sessions',
             '/users',
             '/library',
             '/library/add',

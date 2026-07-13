@@ -215,7 +215,20 @@ class BookController
     }
 
     /**
-     * Update book status (from modal)
+     * @OA\Post(
+     *   path="/books/update-status",
+     *   tags={"Books"},
+     *   summary="Changer le statut de lecture d'un livre",
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(
+     *       required={"book_id","status"},
+     *       @OA\Property(property="book_id", type="string", example="123e4567-e89b-12d3-a456-426614174000"),
+     *       @OA\Property(property="status", type="string", enum={"to_read","reading","finished"})
+     *     )
+     *   ),
+     *   @OA\Response(response=303, description="Statut mis à jour, redirection vers l'accueil")
+     * )
      */
     public function updateStatus(): void
     {

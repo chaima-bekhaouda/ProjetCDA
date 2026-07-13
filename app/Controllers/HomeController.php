@@ -108,4 +108,27 @@ class HomeController
         header('Location: /', true, 303);
         exit;
     }
+
+    /**
+     * @OA\Get(
+     *   path="/db-test",
+     *   tags={"Debug"},
+     *   summary="Vérifier la connectivité à la base de données",
+     *   description="Route de diagnostic, sans authentification. Retourne {\"ok\": 1} si la connexion PDO fonctionne.",
+     *   @OA\Response(
+     *     response=200,
+     *     description="Connexion à la base réussie",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="ok", type="integer", example=1)
+     *     )
+     *   )
+     * )
+     */
+    public function dbTest(): void
+    {
+        $pdo = Database::connect();
+        $result = $pdo->query('SELECT 1 AS ok')->fetch();
+        header('Content-Type: application/json');
+        echo json_encode($result);
+    }
 }

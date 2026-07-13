@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Config\Database;
 use App\Core\Response;
-use App\Repositories\AuthorRepository;
 use App\Repositories\LoanRepository;
 use OpenApi\Annotations as OA;
 
@@ -27,25 +26,6 @@ class DashboardController
 
     /**
      * @OA\Get(
-     *   path="/authors",
-     *   tags={"Dashboard"},
-     *   summary="Afficher la page des auteurs",
-     *   @OA\Response(response=200, description="Vue auteurs")
-     * )
-     */
-    public function authors(): void
-    {
-        $pdo = Database::connect();
-        $authorRepository = new AuthorRepository($pdo);
-
-        Response::view('authors/index', [
-            'title' => 'Auteurs',
-            'authors' => $authorRepository->findAllWithBookCount(),
-        ]);
-    }
-
-    /**
-     * @OA\Get(
      *   path="/loans",
      *   tags={"Dashboard"},
      *   summary="Afficher la page des emprunts",
@@ -60,21 +40,6 @@ class DashboardController
         Response::view('loans/index', [
             'title' => 'Emprunts',
             'loans' => $loanRepository->findAllWithBookData(),
-        ]);
-    }
-
-    /**
-     * @OA\Get(
-     *   path="/reading-sessions",
-     *   tags={"Dashboard"},
-     *   summary="Afficher la page des séances de lecture",
-     *   @OA\Response(response=200, description="Vue séances")
-     * )
-     */
-    public function sessions(): void
-    {
-        Response::view('reading-sessions/index', [
-            'title' => 'Séances de lecture',
         ]);
     }
 
