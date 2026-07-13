@@ -416,6 +416,14 @@ const deleteForm = document.querySelector('.delete-book-form');
 const loanForm = document.querySelector('.loan-form');
 const readLink = document.getElementById('book-modal-read');
 
+document.addEventListener('click', (event) => {
+    document.querySelectorAll('.filter-dropdown[open]').forEach((dropdown) => {
+        if (!dropdown.contains(event.target)) {
+            dropdown.removeAttribute('open');
+        }
+    });
+});
+
 document.querySelectorAll('.trigger-book-modal').forEach((button) => {
     button.addEventListener('click', () => {
         const id = button.dataset.id || '';
