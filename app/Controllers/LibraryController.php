@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Config\Database;
 use App\Core\Response;
+use App\Services\CacheService;
 use App\Services\GutendexService;
 use OpenApi\Annotations as OA;
 
@@ -23,14 +24,24 @@ class LibraryController
     {
         $query = $_GET['q'] ?? '';
         $service = new GutendexService();
+        $cache = new CacheService();
 
-        $books = $service->searchBooks($query !== '' ? $query : 'fiction', 20);
+        // Les résultats de recherche Gutendex sont mis en cache 10 minutes :
+        // évite un appel réseau à chaque chargement de la page, y compris
+        // pour la recherche par défaut ("fiction") affichée sans requête.
+        $searchTerm = $query !== '' ? $query : 'fiction';
+        $cacheKey = 'library:search:' . md5($searchTerm);
+
+        $books = $cache->remember($cacheKey, function () use ($service, $searchTerm) {
+            return $service->searchBooks($searchTerm, 20);
+        }, 600);
 
         Response::view('library/index', [
             'title' => 'Livres libre service',
             'query' => $query,
             'books' => $books,
             'added' => isset($_GET['added']),
+            'alreadyAdded' => isset($_GET['already']),
         ]);
     }
 
@@ -58,6 +69,25 @@ class LibraryController
         }
 
         $pdo = Database::connect();
+
+        // Empêche les doublons : un même livre du catalogue (même
+        // google_volume_id) ne peut pas être ajouté deux fois par le
+        // même utilisateur, même en cas de double-clic sur "Ajouter".
+        $existing = $pdo->prepare("
+            SELECT id FROM books
+            WHERE user_id = :user_id AND google_volume_id = :google_volume_id
+            LIMIT 1
+        ");
+        $existing->execute([
+            'user_id' => $_SESSION['user']['id'],
+            'google_volume_id' => $volumeId,
+        ]);
+
+        if ($existing->fetch()) {
+            header('Location: /library?already=1', true, 303);
+            exit;
+        }
+
         $sql = "
             INSERT INTO books (user_id, title, author, genre, cover_path, google_volume_id, status)
             VALUES (:user_id, :title, :author, :genre, :cover_path, :google_volume_id, 'to_read')
@@ -95,7 +125,24 @@ class LibraryController
         }
 
         $service = new GutendexService();
-        $book = $service->findBook($volumeId);
+        $cache = new CacheService();
+
+        // Les métadonnées du livre (titre, auteur, text_url...) sont
+        // stockées en session dès le premier accès : les pages suivantes
+        // (Précédent/Suivant) ne refont plus AUCUN appel à Gutendex, ni
+        // même au cache Redis. Le cache Redis (24h) sert de filet pour
+        // les nouvelles sessions ou les autres utilisateurs consultant
+        // le même livre.
+        $bookSessionKey = 'reader_book_' . $volumeId;
+
+        if (!empty($_SESSION[$bookSessionKey])) {
+            $book = $_SESSION[$bookSessionKey];
+        } else {
+            $book = $cache->remember('library:book:' . $volumeId, function () use ($service, $volumeId) {
+                return $service->findBook($volumeId);
+            }, 86400);
+            $_SESSION[$bookSessionKey] = $book;
+        }
 
         if ($book === null || empty($book['embeddable']) || empty($book['text_url'])) {
             Response::view('library/read', [
@@ -115,7 +162,9 @@ class LibraryController
         $sessionKey = 'reader_pages_' . $volumeId;
 
         if (empty($_SESSION[$sessionKey])) {
-            $fullText = $service->fetchFullText($book['text_url']);
+            $fullText = $cache->remember('library:text:' . $volumeId, function () use ($service, $book) {
+                return $service->fetchFullText($book['text_url']);
+            }, 86400);
 
             if ($fullText === null) {
                 Response::view('library/read', [
@@ -195,6 +244,7 @@ class LibraryController
             ]);
 
             unset($_SESSION['reader_pages_' . $volumeId]);
+            unset($_SESSION['reader_book_' . $volumeId]);
         }
 
         header('Location: /library', true, 303);
