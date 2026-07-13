@@ -1,0 +1,13 @@
+/vendor/
+/.env
+.DS_Store
+.idea/
+.vscode/
+app copy/
+.phpunit.result.cache
+tests-results.txt
+.env
+public/uploads/*
+!public/uploads/books/
+public/uploads/books/*
+!public/uploads/books/.gitkeep
