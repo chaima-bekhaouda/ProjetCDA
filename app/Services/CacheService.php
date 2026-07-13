@@ -116,6 +116,9 @@ class CacheService
     {
         $this->socket = @fsockopen($this->host, $this->port, $errno, $errstr, 0.2);
         if (is_resource($this->socket)) {
+            // Timeout de lecture généreux : le premier GET d'un gros texte
+            // de livre peut prendre un peu de temps à transiter.
+            stream_set_timeout($this->socket, 5);
             $this->available = true;
         }
     }
@@ -131,9 +134,33 @@ class CacheService
             $payload .= '$' . strlen((string) $arg) . "\r\n" . $arg . "\r\n";
         }
 
-        fwrite($this->socket, $payload);
+        if (!$this->writeAll($payload)) {
+            $this->available = false;
+            return false;
+        }
 
         return $this->readResponse();
+    }
+
+    /**
+     * fwrite() sur un socket peut n'écrire qu'une partie des données en un
+     * seul appel (surtout pour les gros payloads, comme le texte complet
+     * d'un livre) : on boucle jusqu'à ce que tout soit réellement envoyé.
+     */
+    private function writeAll(string $payload): bool
+    {
+        $length = strlen($payload);
+        $written = 0;
+
+        while ($written < $length) {
+            $chunk = fwrite($this->socket, substr($payload, $written));
+            if ($chunk === false || $chunk === 0) {
+                return false;
+            }
+            $written += $chunk;
+        }
+
+        return true;
     }
 
     private function readResponse(): mixed
@@ -172,6 +199,12 @@ class CacheService
         return $values;
     }
 
+    /**
+     * fread() sur un socket peut renvoyer moins d'octets que demandé en un
+     * seul appel (surtout pour les gros payloads) : on boucle jusqu'à avoir
+     * lu exactement $length octets, sinon le texte d'un livre entier peut
+     * arriver tronqué et corrompre le flux du protocole RESP.
+     */
     private function readBulk(string $length): mixed
     {
         $length = (int) $length;
@@ -179,12 +212,18 @@ class CacheService
             return null;
         }
 
-        $payload = fread($this->socket, $length + 2);
-        if ($payload === false) {
-            $this->available = false;
-            return false;
+        $toRead = $length + 2; // +2 pour le \r\n final du protocole RESP
+        $payload = '';
+
+        while (strlen($payload) < $toRead) {
+            $chunk = fread($this->socket, $toRead - strlen($payload));
+            if ($chunk === false || $chunk === '') {
+                $this->available = false;
+                return false;
+            }
+            $payload .= $chunk;
         }
 
-        return trim(substr($payload, 0, $length));
+        return substr($payload, 0, $length);
     }
 }
