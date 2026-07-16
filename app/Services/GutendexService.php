@@ -64,6 +64,7 @@ class GutendexService
             'http' => [
                 'timeout' => 10,
                 'ignore_errors' => true,
+                'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\r\n",
             ],
         ]);
 
@@ -146,6 +147,8 @@ class GutendexService
             'http' => [
                 'timeout' => 6,
                 'ignore_errors' => true,
+                'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36\r\n"
+                          . "Accept: application/json\r\n",
             ],
         ]);
 
