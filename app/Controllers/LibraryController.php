@@ -26,15 +26,20 @@ class LibraryController
         $service = new GutendexService();
         $cache = new CacheService();
 
-        // Les résultats de recherche Gutendex sont mis en cache 10 minutes :
-        // évite un appel réseau à chaque chargement de la page, y compris
-        // pour la recherche par défaut ("fiction") affichée sans requête.
+        // Les résultats de recherche Gutendex sont mis en cache 10 minutes —
+        // mais jamais un résultat vide : un échec ou une absence de résultat
+        // transitoire ne doit pas rester bloqué pour tout le monde pendant
+        // 10 minutes, il vaut mieux retenter l'appel réseau la fois suivante.
         $searchTerm = $query !== '' ? $query : 'fiction';
         $cacheKey = 'library:search:' . md5($searchTerm);
 
-        $books = $cache->remember($cacheKey, function () use ($service, $searchTerm) {
-            return $service->searchBooks($searchTerm, 20);
-        }, 600);
+        $books = $cache->get($cacheKey);
+        if ($books === null || empty($books)) {
+            $books = $service->searchBooks($searchTerm, 20);
+            if (!empty($books)) {
+                $cache->set($cacheKey, $books, 600);
+            }
+        }
 
         Response::view('library/index', [
             'title' => 'Livres libre service',
