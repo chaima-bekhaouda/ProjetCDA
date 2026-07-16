@@ -1,0 +1,44 @@
+FROM php:8.2-fpm
+
+# Dépendances système + extensions PHP nécessaires (identique au Dockerfile local)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libpq-dev \
+        unzip \
+        git \
+        libzip-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libwebp-dev \
+        libfreetype6-dev \
+        libonig-dev \
+        zip \
+        nginx \
+        supervisor \
+    && docker-php-ext-install pdo pdo_pgsql mbstring zip gd opcache \
+    && pecl install redis || true \
+    && docker-php-ext-enable redis || true \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+COPY . /var/www/html
+RUN composer install --no-interaction --no-scripts --prefer-dist --optimize-autoloader || true
+
+RUN mkdir -p public/uploads/books \
+    && chown -R www-data:www-data public/uploads \
+    && chown -R www-data:www-data /var/www/html
+
+# Configuration nginx : sert public/ et transmet le PHP à PHP-FPM en local (127.0.0.1:9000)
+COPY docker/render/nginx.conf /etc/nginx/sites-enabled/default
+COPY docker/render/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Render fournit dynamiquement la variable PORT — nginx doit écouter dessus,
+# pas sur un port fixe comme en local (géré via un script d'entrée).
+COPY docker/render/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 10000
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

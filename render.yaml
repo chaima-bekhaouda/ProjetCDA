@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: booknest
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    plan: free
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: booknest-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: booknest-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: booknest-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: booknest-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: booknest-db
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: keyvalue
+          name: booknest-cache
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: keyvalue
+          name: booknest-cache
+          property: port
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_ENV
+        value: production
+
+  - type: keyvalue
+    name: booknest-cache
+    plan: free
+
+databases:
+  - name: booknest-db
+    plan: free
+    databaseName: booknest
+    user: booknest

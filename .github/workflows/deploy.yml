@@ -1,0 +1,38 @@
+name: CI/CD — Tests puis déploiement Render
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests PHPUnit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo, pdo_pgsql, mbstring, zip, gd, redis
+          coverage: none
+
+      - name: Installer les dépendances Composer
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Lancer la suite PHPUnit
+        run: vendor/bin/phpunit --testdox
+
+  deploy:
+    name: Déployer sur Render
+    needs: test
+    if: success()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Déclencher le déploiement Render
+        run: |
+          curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
