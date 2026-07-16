@@ -43,6 +43,9 @@ services:
   - type: keyvalue
     name: booknest-cache
     plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: tout le monde (projet personnel, pas de données sensibles)
 
 databases:
   - name: booknest-db
