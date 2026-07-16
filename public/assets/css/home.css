@@ -639,6 +639,14 @@ button {
     min-height: 24px;
 }
 
+/* Priment sur .shelf-row--empty (même si l'étagère est vide) : la ligne doit
+   rester assez haute pour contenir la plante/le globe sans qu'ils débordent
+   au-dessus du cadre — le bug se produisait avec 0 livre sur l'étagère. */
+.shelf-row--has-decor,
+.shelf-row--has-decor.shelf-row--empty {
+    min-height: 112px;
+}
+
 .shelf-row--covers::before {
     content: "";
     position: absolute;
@@ -1361,5 +1369,172 @@ button {
     .citation-card {
         flex: 1;
         min-width: 260px;
+    }
+}
+
+/* ============================================
+   PASSE MOBILE DÉDIÉE (téléphones, ≤ 480px)
+   ============================================ */
+@media (max-width: 480px) {
+    .home-shell {
+        padding: 12px;
+    }
+
+    /* En-tête : logo/texte/recherche/profil empilés proprement,
+       au lieu de se comprimer ou déborder */
+    .home-header {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding-bottom: 12px;
+    }
+
+    .brand-logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .brand-text h1 {
+        font-size: 1.15rem;
+    }
+
+    .brand-text p {
+        font-size: 0.72rem;
+    }
+
+    .header-center {
+        order: 3;
+        width: 100%;
+    }
+
+    .home-search-input {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.85rem;
+        padding: 10px 14px;
+    }
+
+    .header-right {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .profile-name {
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .action-btn.add-btn {
+        font-size: 0.8rem;
+        padding: 8px 14px;
+    }
+
+    /* Hero : titre nettement plus petit, la citation illustrée passe
+       en dessous plutôt qu'à côté (déjà géré par top-row en 1 colonne
+       à 980px), mais on resserre encore la taille du texte */
+    .hero-left h2 {
+        font-size: 1.6rem;
+        line-height: 1.25;
+    }
+
+    .hero-eyebrow {
+        font-size: 0.68rem;
+    }
+
+    .hero-left p {
+        font-size: 0.85rem;
+    }
+
+    .hero-cta {
+        font-size: 0.82rem;
+        padding: 10px 16px;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .citation-card {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .citation-card__image {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Filtres Genre/Statut : pleine largeur, faciles à toucher */
+    .shelf-toolbar-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-col {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .filter-chip {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+
+    /* Étagères : marges réduites, couvertures plus petites que sur
+       tablette pour que 2-3 tiennent par ligne sans être minuscules */
+    .shelf-block {
+        padding: 20px 12px 14px;
+        border-width: 6px;
+    }
+
+    .cover-book {
+        width: 76px;
+        height: 110px;
+    }
+
+    .decor-book img {
+        height: 58px;
+    }
+
+    .decor-book--plant img {
+        height: 76px;
+    }
+
+    .decor-book--fixed-left {
+        left: 0;
+    }
+
+    .decor-book--fixed-right {
+        right: 0;
+    }
+
+    .shelf-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Colonnes Aperçu / Activité : cartes pleine largeur, empilées,
+       texte et icônes resserrés pour rester lisibles */
+    .overview-card,
+    .activity-card,
+    .citation-card {
+        min-width: 0;
+        width: 100%;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .overview-list li,
+    .activity-item {
+        font-size: 0.85rem;
+    }
+
+    /* Modal fiche livre : occupe presque tout l'écran, sans marge excessive */
+    .book-modal {
+        width: 94vw;
+        max-width: 94vw;
+    }
+
+    .book-modal__layout {
+        padding: 16px;
     }
 }

@@ -307,7 +307,7 @@ function renderFlatBookButton(array $book, array $statusLabelMap): void
             <section class="library-section">
                 <div class="shelf-block">
                     <?php foreach ($shelves as $shelfIndex => $shelfBooks): ?>
-                        <div class="shelf-row shelf-row--covers<?= empty($shelfBooks) ? ' shelf-row--empty' : '' ?>">
+                        <div class="shelf-row shelf-row--covers<?= empty($shelfBooks) ? ' shelf-row--empty' : '' ?><?= in_array($shelfIndex, [0, 2], true) ? ' shelf-row--has-decor' : '' ?>">
                             <?php if ($shelfIndex === 2): ?>
                                 <div class="decor-book decor-book--plant decor-book--fixed-left">
                                     <img src="/assets/images/books/plant.png" alt="" aria-hidden="true">
