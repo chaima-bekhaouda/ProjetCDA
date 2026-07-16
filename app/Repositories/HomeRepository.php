@@ -24,12 +24,13 @@ class HomeRepository
                 status,
                 notes,
                 google_volume_id,
+                borrowed_from,
+                return_due_at,
                 created_at,
                 updated_at
             FROM books
             WHERE user_id = :user_id
             ORDER BY id DESC
-            LIMIT 12
         ";
         $statement = $this->pdo->prepare($sql);
         $statement->execute(['user_id' => $userId]);
@@ -136,6 +137,8 @@ class HomeRepository
                 status,
                 notes,
                 google_volume_id,
+                borrowed_from,
+                return_due_at,
                 created_at,
                 updated_at
             FROM books
@@ -155,7 +158,7 @@ class HomeRepository
             $params['status'] = $status;
         }
         $sql .= ' WHERE ' . implode(' AND ', $conditions);
-        $sql .= ' ORDER BY id DESC LIMIT 12';
+        $sql .= ' ORDER BY id DESC';
         $statement = $this->pdo->prepare($sql);
         $statement->execute($params);
         return $statement->fetchAll(PDO::FETCH_ASSOC);
