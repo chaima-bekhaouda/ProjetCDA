@@ -19,14 +19,13 @@ $selectedStatus = $selectedStatus ?? '';
 
 $extraShelves = $extraShelves ?? 0;
 
-// Pagination : 6 livres sur la première étagère, puis 12 par étagère.
+// Pagination : 6 livres par étagère, uniformément.
 // On garantit toujours au moins 2 étagères (pour la plante/le globe),
 // plus une étagère vide en réserve, plus les étagères ajoutées manuellement.
 $shelves = [];
 $remaining = $books;
-$shelves[] = array_splice($remaining, 0, 6);
 while (!empty($remaining)) {
-    $shelves[] = array_splice($remaining, 0, 12);
+    $shelves[] = array_splice($remaining, 0, 6);
 }
 while (count($shelves) < 2) {
     $shelves[] = [];
@@ -96,6 +95,44 @@ function renderBookButton(array $book, array $statusLabelMap): void
                 style="background: linear-gradient(160deg, <?= e($book['cover_color'] ?? '#8a3d22') ?> 0%, #241109 100%);"
             ><?= e($book['title'] ?? '') ?></span>
         <?php endif; ?>
+    </button>
+    <?php
+}
+
+// Livre affiché "à plat" (couché), pour l'étagère dédiée aux livres rendus.
+// Réutilise les mêmes data-attributes que renderBookButton : le clic ouvre
+// exactement le même modal, avec les mêmes actions (changer le statut...).
+function renderFlatBookButton(array $book, array $statusLabelMap): void
+{
+    $cover = bookCoverPath($book);
+    ?>
+    <button
+        type="button"
+        class="trigger-book-modal cover-book cover-book--flat"
+        data-id="<?= e($book['id'] ?? '') ?>"
+        data-title="<?= e($book['title'] ?? '') ?>"
+        data-author="<?= e($book['author'] ?? '') ?>"
+        data-year="<?= e($book['year'] ?? '') ?>"
+        data-genre="<?= e($book['genre'] ?? '') ?>"
+        data-pages="<?= e($book['pages'] ?? '') ?>"
+        data-status-value="<?= e($book['status'] ?? '') ?>"
+        data-status="<?= e(bookStatusLabel($book['status'] ?? '', $statusLabelMap)) ?>"
+        data-quote="<?= e($book['notes'] ?? '') ?>"
+        data-cover="<?= e($cover) ?>"
+        data-volume-id="<?= e($book['google_volume_id'] ?? '') ?>"
+        data-borrowed-from="<?= e($book['borrowed_from'] ?? '') ?>"
+        data-return-due-at="<?= e($book['return_due_at'] ?? '') ?>"
+    >
+        <?php if ($cover !== ''): ?>
+            <img src="<?= e($cover) ?>" alt="" loading="lazy">
+        <?php else: ?>
+            <span
+                class="cover-book-fallback cover-book-fallback--flat"
+                style="background: linear-gradient(100deg, <?= e($book['cover_color'] ?? '#8a3d22') ?> 0%, #241109 100%);"
+            ></span>
+        <?php endif; ?>
+        <span class="cover-badge cover-badge--returned">Rendu</span>
+        <span class="flat-book-title"><?= e($book['title'] ?? '') ?></span>
     </button>
     <?php
 }
@@ -271,8 +308,8 @@ function renderBookButton(array $book, array $statusLabelMap): void
                 <div class="shelf-block">
                     <?php foreach ($shelves as $shelfIndex => $shelfBooks): ?>
                         <div class="shelf-row shelf-row--covers<?= empty($shelfBooks) ? ' shelf-row--empty' : '' ?>">
-                            <?php if ($shelfIndex === 0): ?>
-                                <div class="decor-book decor-book--plant">
+                            <?php if ($shelfIndex === 2): ?>
+                                <div class="decor-book decor-book--plant decor-book--fixed-left">
                                     <img src="/assets/images/books/plant.png" alt="" aria-hidden="true">
                                 </div>
                             <?php endif; ?>
@@ -281,8 +318,8 @@ function renderBookButton(array $book, array $statusLabelMap): void
                                 <?php renderBookButton($book, $statusLabelMap); ?>
                             <?php endforeach; ?>
 
-                            <?php if ($shelfIndex === 1): ?>
-                                <div class="decor-book decor-book--globe">
+                            <?php if ($shelfIndex === 0): ?>
+                                <div class="decor-book decor-book--globe decor-book--fixed-right">
                                     <img src="/assets/images/books/globe.png" alt="" aria-hidden="true">
                                 </div>
                             <?php endif; ?>
