@@ -150,13 +150,30 @@ class GutendexService
         ]);
 
         for ($attempt = 0; $attempt <= $retries; $attempt++) {
+            error_clear_last();
             $raw = @file_get_contents($url, false, $context);
+
             if ($raw === false) {
+                // DIAGNOSTIC TEMPORAIRE — à retirer une fois le problème identifié.
+                // Capture la vraie erreur au lieu de la laisser silencieuse.
+                $lastError = error_get_last();
+                error_log(sprintf(
+                    '[Gutendex] Échec sur %s (tentative %d) : %s',
+                    $url,
+                    $attempt + 1,
+                    $lastError['message'] ?? 'aucun détail disponible'
+                ));
                 continue;
             }
 
             $decoded = json_decode($raw, true);
             if (!is_array($decoded)) {
+                error_log(sprintf(
+                    '[Gutendex] Réponse reçue mais JSON invalide sur %s (tentative %d) : %s',
+                    $url,
+                    $attempt + 1,
+                    substr($raw, 0, 200)
+                ));
                 if ($attempt < $retries) {
                     usleep(300000);
                     continue;
