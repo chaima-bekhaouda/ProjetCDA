@@ -52,6 +52,8 @@ class BookController
                 'status' => 'to_read',
                 'notes' => '',
                 'cover_color' => '#8a3d22',
+                'borrowed_from' => '',
+                'return_due_at' => '',
             ],
             'errors' => [],
         ]);
@@ -72,6 +74,8 @@ class BookController
      *       @OA\Property(property="genre", type="string", example="Classique"),
      *       @OA\Property(property="status", type="string", example="to_read"),
      *       @OA\Property(property="notes", type="string", example="À relire"),
+     *       @OA\Property(property="borrowed_from", type="string", example="Sarah"),
+     *       @OA\Property(property="return_due_at", type="string", format="date"),
      *       @OA\Property(property="cover", type="string", format="binary")
      *     )
      *   ),
@@ -86,6 +90,9 @@ class BookController
         $bookRepo = new BookRepository($pdo);
         $cache = new CacheService();
 
+        $borrowedFrom = trim($_POST['borrowed_from'] ?? '');
+        $returnDueAt = trim($_POST['return_due_at'] ?? '') ?: null;
+
         $data = [
             'user_id' => $_SESSION['user']['id'] ?? null,
             'title' => trim($_POST['title'] ?? ''),
@@ -93,10 +100,14 @@ class BookController
             'year' => trim($_POST['year'] ?? ''),
             'pages' => trim($_POST['pages'] ?? ''),
             'genre' => trim($_POST['genre'] ?? ''),
-            'status' => trim($_POST['status'] ?? 'to_read'),
+            // Si un prêteur est renseigné, le livre est directement marqué
+            // comme emprunté, quel que soit le statut sélectionné dans le formulaire.
+            'status' => $borrowedFrom !== '' ? 'borrowed' : trim($_POST['status'] ?? 'to_read'),
             'notes' => trim($_POST['notes'] ?? ''),
             'cover_color' => trim($_POST['cover_color'] ?? '#8a3d22'),
             'cover_path' => null,
+            'borrowed_from' => $borrowedFrom !== '' ? $borrowedFrom : null,
+            'return_due_at' => $borrowedFrom !== '' ? $returnDueAt : null,
         ];
 
         $errors = [];
@@ -121,7 +132,7 @@ class BookController
         $errors['pages'] = 'Le nombre de pages doit être un nombre.';
     }
 
-    if (!in_array($data['status'], ['to_read', 'reading', 'finished'], true)) {
+    if ($borrowedFrom === '' && !in_array($data['status'], ['to_read', 'reading', 'finished'], true)) {
         $errors['status'] = 'Le statut est invalide.';
     }
 
@@ -233,6 +244,7 @@ class BookController
     public function updateStatus(): void
     {
         // change le statut du livre depuis la fiche modale
+        // (sert aussi à sortir manuellement du statut temporaire 'returned')
         $bookId = trim($_POST['book_id'] ?? '');
         $status = trim($_POST['status'] ?? '');
         $userId = $_SESSION['user']['id'] ?? null;
@@ -245,6 +257,103 @@ class BookController
         $pdo = Database::connect();
         $bookRepo = new BookRepository($pdo);
         $bookRepo->updateStatus($bookId, $status, $userId);
+
+        $cache = new CacheService();
+        $cache->deleteByPrefix('home:');
+
+        header('Location: /', true, 303);
+        exit;
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/books/borrow",
+     *   tags={"Books"},
+     *   summary="Marquer un livre comme emprunté à quelqu'un d'autre",
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(
+     *       required={"book_id","borrowed_from"},
+     *       @OA\Property(property="book_id", type="string"),
+     *       @OA\Property(property="borrowed_from", type="string", example="Sarah"),
+     *       @OA\Property(property="return_due_at", type="string", format="date", example="2026-08-01")
+     *     )
+     *   ),
+     *   @OA\Response(response=303, description="Livre marqué comme emprunté, redirection vers l'accueil")
+     * )
+     */
+    public function borrow(): void
+    {
+        if (empty($_SESSION['user']['id'])) {
+            header('Location: /login', true, 303);
+            exit;
+        }
+
+        $bookId = trim($_POST['book_id'] ?? '');
+        $borrowedFrom = trim($_POST['borrowed_from'] ?? '');
+        $returnDueAt = trim($_POST['return_due_at'] ?? '') ?: null;
+
+        if ($bookId === '' || $borrowedFrom === '') {
+            header('Location: /', true, 303);
+            exit;
+        }
+
+        $pdo = Database::connect();
+        $statement = $pdo->prepare("
+            UPDATE books
+            SET status = 'borrowed', borrowed_from = :borrowed_from, return_due_at = :return_due_at
+            WHERE id = :id AND user_id = :user_id
+        ");
+        $statement->execute([
+            'borrowed_from' => $borrowedFrom,
+            'return_due_at' => $returnDueAt,
+            'id' => $bookId,
+            'user_id' => $_SESSION['user']['id'],
+        ]);
+
+        $cache = new CacheService();
+        $cache->deleteByPrefix('home:');
+
+        header('Location: /', true, 303);
+        exit;
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/books/return-to-owner",
+     *   tags={"Books"},
+     *   summary="Marquer un livre emprunté comme rendu à son propriétaire",
+     *   @OA\Response(response=303, description="Livre marqué comme rendu, redirection vers l'accueil")
+     * )
+     */
+    public function returnToOwner(): void
+    {
+        if (empty($_SESSION['user']['id'])) {
+            header('Location: /login', true, 303);
+            exit;
+        }
+
+        $bookId = trim($_POST['book_id'] ?? '');
+
+        if ($bookId === '') {
+            header('Location: /', true, 303);
+            exit;
+        }
+
+        $pdo = Database::connect();
+        // Passe à 'returned' (statut temporaire, bandeau "Rendu") plutôt que
+        // directement à 'to_read' : borrowed_from est conservé pour référence
+        // jusqu'à ce que l'utilisateur choisisse manuellement un statut normal
+        // via le menu de changement de statut.
+        $statement = $pdo->prepare("
+            UPDATE books
+            SET status = 'returned'
+            WHERE id = :id AND user_id = :user_id
+        ");
+        $statement->execute([
+            'id' => $bookId,
+            'user_id' => $_SESSION['user']['id'],
+        ]);
 
         $cache = new CacheService();
         $cache->deleteByPrefix('home:');

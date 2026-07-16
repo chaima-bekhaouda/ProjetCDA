@@ -711,6 +711,36 @@ button {
     box-shadow: 0 22px 32px rgba(0, 0, 0, 0.55), 0 2px 0 rgba(0, 0, 0, 0.3);
 }
 
+.cover-badge {
+    position: absolute;
+    top: 8px;
+    left: -6px;
+    z-index: 2;
+    padding: 3px 10px 3px 12px;
+    font-family: var(--font-ui);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #2b1607;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 70%);
+}
+
+.cover-badge--borrowed {
+    background: linear-gradient(180deg, #e8c493, #b9803c);
+}
+
+.cover-badge--lent {
+    background: linear-gradient(180deg, #8fb3c4, #4a7a91);
+    color: #0f2530;
+}
+
+.cover-badge--returned {
+    background: linear-gradient(180deg, #a8b89a, #6f8a5f);
+    color: #1c2a15;
+}
+
 .cover-book img {
     width: 100%;
     height: 100%;
@@ -919,7 +949,9 @@ button {
     font-size: 0.84rem;
 }
 
-.loan-form input[type="text"] {
+.loan-form input[type="text"],
+.borrow-form input[type="text"],
+.borrow-form input[type="date"] {
     flex: 1;
     min-width: 140px;
     padding: 10px 12px;
@@ -931,8 +963,13 @@ button {
     font-size: 0.84rem;
 }
 
-.loan-form input[type="text"]::placeholder {
+.loan-form input[type="text"]::placeholder,
+.borrow-form input[type="text"]::placeholder {
     color: var(--ink-muted);
+}
+
+.borrow-form {
+    flex-wrap: wrap;
 }
 
 .modal-action {

@@ -40,6 +40,9 @@ $statusLabelMap = [
     'to_read' => 'À lire',
     'reading' => 'En cours',
     'finished' => 'Terminé',
+    'lent' => 'Prêté',
+    'borrowed' => 'Emprunté',
+    'returned' => 'Rendu',
 ];
 
 function e($value): string
@@ -75,7 +78,16 @@ function renderBookButton(array $book, array $statusLabelMap): void
         data-quote="<?= e($book['notes'] ?? '') ?>"
         data-cover="<?= e($cover) ?>"
         data-volume-id="<?= e($book['google_volume_id'] ?? '') ?>"
+        data-borrowed-from="<?= e($book['borrowed_from'] ?? '') ?>"
+        data-return-due-at="<?= e($book['return_due_at'] ?? '') ?>"
     >
+        <?php if (($book['status'] ?? '') === 'borrowed'): ?>
+            <span class="cover-badge cover-badge--borrowed">Emprunté</span>
+        <?php elseif (($book['status'] ?? '') === 'lent'): ?>
+            <span class="cover-badge cover-badge--lent">Prêté</span>
+        <?php elseif (($book['status'] ?? '') === 'returned'): ?>
+            <span class="cover-badge cover-badge--returned">Rendu</span>
+        <?php endif; ?>
         <?php if ($cover !== ''): ?>
             <img src="<?= e($cover) ?>" alt="<?= e($book['title'] ?? '') ?>" loading="lazy">
         <?php else: ?>
@@ -391,6 +403,18 @@ function renderBookButton(array $book, array $statusLabelMap): void
                         <button type="submit" class="modal-action">Marquer comme prêté</button>
                     </form>
 
+                    <form action="/books/borrow" method="post" class="borrow-form">
+                        <label for="book-modal-borrowed-from" class="visually-hidden">Emprunté à</label>
+                        <input type="text" name="borrowed_from" id="book-modal-borrowed-from" placeholder="Emprunté à qui ?" required>
+                        <label for="book-modal-return-due" class="visually-hidden">Date de retour prévue</label>
+                        <input type="date" name="return_due_at" id="book-modal-return-due">
+                        <button type="submit" class="modal-action">Marquer comme emprunté</button>
+                    </form>
+
+                    <form action="/books/return-to-owner" method="post" class="return-owner-form" id="return-owner-form" style="display:none;">
+                        <button type="submit" class="modal-action modal-action--primary">Rendre le livre à son propriétaire</button>
+                    </form>
+
                     <a href="#" id="book-modal-read" class="modal-action" style="display:none;">Lire</a>
                 </div>
             </div>
@@ -414,15 +438,9 @@ const statusSelect = document.getElementById('book-modal-status-select');
 const statusForm = document.querySelector('.status-change-form');
 const deleteForm = document.querySelector('.delete-book-form');
 const loanForm = document.querySelector('.loan-form');
+const borrowForm = document.querySelector('.borrow-form');
+const returnOwnerForm = document.getElementById('return-owner-form');
 const readLink = document.getElementById('book-modal-read');
-
-document.addEventListener('click', (event) => {
-    document.querySelectorAll('.filter-dropdown[open]').forEach((dropdown) => {
-        if (!dropdown.contains(event.target)) {
-            dropdown.removeAttribute('open');
-        }
-    });
-});
 
 document.querySelectorAll('.trigger-book-modal').forEach((button) => {
     button.addEventListener('click', () => {
@@ -450,7 +468,30 @@ document.querySelectorAll('.trigger-book-modal').forEach((button) => {
         modalMeta.textContent = `${author} · ${year}`;
         modalGenre.textContent = genre;
         modalPages.textContent = pages;
-        modalQuote.textContent = quote ? `« ${quote} »` : '';
+
+        const statusValue = button.dataset.statusValue || '';
+        const borrowedFrom = button.dataset.borrowedFrom || '';
+        const returnDueAt = button.dataset.returnDueAt || '';
+
+        if (statusValue === 'borrowed' && borrowedFrom !== '') {
+            let text = `Emprunté à ${borrowedFrom}`;
+            if (returnDueAt) {
+                const [y, m, d] = returnDueAt.split('-');
+                text += ` — à rendre le ${d}/${m}/${y}`;
+            }
+            modalQuote.textContent = text;
+        } else if (statusValue === 'returned' && borrowedFrom !== '') {
+            modalQuote.textContent = `Rendu à ${borrowedFrom} — change le statut ci-dessous pour le classer`;
+        } else {
+            modalQuote.textContent = quote ? `« ${quote} »` : '';
+        }
+
+        if (returnOwnerForm) {
+            returnOwnerForm.style.display = statusValue === 'borrowed' ? '' : 'none';
+        }
+        if (borrowForm) {
+            borrowForm.style.display = (statusValue === 'borrowed' || statusValue === 'returned') ? 'none' : '';
+        }
 
         const volumeId = button.dataset.volumeId || '';
         if (readLink) {
@@ -491,6 +532,8 @@ function attachBookIdOnSubmit(form) {
 attachBookIdOnSubmit(statusForm);
 attachBookIdOnSubmit(deleteForm);
 attachBookIdOnSubmit(loanForm);
+attachBookIdOnSubmit(borrowForm);
+attachBookIdOnSubmit(returnOwnerForm);
 
 if (bookModal) {
     bookModal.addEventListener('click', (event) => {

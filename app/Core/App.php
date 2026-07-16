@@ -56,7 +56,8 @@ class App
         $this->router->post('/loans/return', [$loans, 'returnLoan']);
         $this->router->post('/shelves/add', [$home, 'addShelf']);
         $this->router->post('/shelves/remove', [$home, 'removeShelf']);
-        
+        $this->router->post('/books/borrow', [$books, 'borrow']);
+        $this->router->post('/books/return-to-owner', [$books, 'returnToOwner']);
 
         $this->router->get('/db-test', [$home, 'dbTest']);
 
@@ -76,6 +77,8 @@ class App
             '/loans/return',
             '/shelves/add',
             '/shelves/remove',
+            '/books/borrow',
+            '/books/return-to-owner',
         ];
 
         $this->middleware[] = new AuthenticateMiddleware($protectedPaths);

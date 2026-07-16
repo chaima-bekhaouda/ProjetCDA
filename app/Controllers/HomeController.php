@@ -11,46 +11,56 @@ class HomeController
      * @OA\Get(
      *   path="/",
      *   tags={"Home"},
-     *   summary="Afficher la page d'accueil avec la collection",
+     *   summary="Afficher la page d'accueil avec la collection de l'utilisateur connecté",
      *   @OA\Parameter(name="q", in="query", required=false, @OA\Schema(type="string")),
      *   @OA\Parameter(name="genre", in="query", required=false, @OA\Schema(type="string")),
      *   @OA\Parameter(name="status", in="query", required=false, @OA\Schema(type="string")),
-     *   @OA\Response(response=200, description="Collection et statistiques")
+     *   @OA\Response(response=200, description="Collection et statistiques de l'utilisateur")
      * )
      */
     public function index(): void
     {
-        // la page d'accueil charge les données via le repository
-        // et met en cache le résultat pour accélérer l'affichage.
+        if (empty($_SESSION['user']['id'])) {
+            header('Location: /login', true, 303);
+            exit;
+        }
+
+        $userId = $_SESSION['user']['id'];
+
         $pdo = Database::connect();
         $homeRepository = new HomeRepository($pdo);
         $cache = new CacheService();
         $search = trim($_GET['q'] ?? '');
         $selectedGenre = trim($_GET['genre'] ?? '');
         $selectedStatus = trim($_GET['status'] ?? '');
-        $cacheKey = 'home:books:' . md5($search . '|' . $selectedGenre . '|' . $selectedStatus);
-        $statsCacheKey = 'home:stats';
-        $activityCacheKey = 'home:activity';
-        $books = $cache->remember($cacheKey, static function () use ($homeRepository, $search, $selectedGenre, $selectedStatus): array {
+
+        // Les clés de cache sont scopées par utilisateur (préfixées par son id) :
+        // sans ça, le cache Redis partagé renverrait les données du premier
+        // utilisateur ayant déclenché le calcul à tous les autres.
+        $cacheKey = "home:{$userId}:books:" . md5($search . '|' . $selectedGenre . '|' . $selectedStatus);
+        $statsCacheKey = "home:{$userId}:stats";
+        $activityCacheKey = "home:{$userId}:activity";
+
+        $books = $cache->remember($cacheKey, static function () use ($homeRepository, $userId, $search, $selectedGenre, $selectedStatus): array {
             if ($search !== '' || $selectedGenre !== '' || $selectedStatus !== '') {
-                return $homeRepository->searchShelfBooks($search, $selectedGenre, $selectedStatus);
+                return $homeRepository->searchShelfBooks($userId, $search, $selectedGenre, $selectedStatus);
             }
-            return $homeRepository->getShelfBooks();
+            return $homeRepository->getShelfBooks($userId);
         }, 300);
-        $stats = $cache->remember($statsCacheKey, static function () use ($homeRepository): array {
-            return $homeRepository->getHomeStats();
+
+        $stats = $cache->remember($statsCacheKey, static function () use ($homeRepository, $userId): array {
+            return $homeRepository->getHomeStats($userId);
         }, 300);
-        $activity = $cache->remember($activityCacheKey, static function () use ($homeRepository): array {
-            return $homeRepository->getRecentActivity(6);
+
+        $activity = $cache->remember($activityCacheKey, static function () use ($homeRepository, $userId): array {
+            return $homeRepository->getRecentActivity($userId, 6);
         }, 300);
 
         // nombre d'étagères vides ajoutées manuellement par l'utilisateur
         $extraShelves = 0;
-        if (!empty($_SESSION['user']['id'])) {
-            $statement = $pdo->prepare('SELECT extra_shelves FROM users WHERE id = :id');
-            $statement->execute(['id' => $_SESSION['user']['id']]);
-            $extraShelves = (int) ($statement->fetchColumn() ?: 0);
-        }
+        $statement = $pdo->prepare('SELECT extra_shelves FROM users WHERE id = :id');
+        $statement->execute(['id' => $userId]);
+        $extraShelves = (int) ($statement->fetchColumn() ?: 0);
 
         Response::view('home/index', [
             'books' => $books,
