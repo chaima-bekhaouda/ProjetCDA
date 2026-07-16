@@ -35,7 +35,7 @@ class LibraryController
 
         $books = $cache->get($cacheKey);
         if ($books === null || empty($books)) {
-            $books = $service->searchBooks($searchTerm, 20);
+            $books = $service->searchBooks($searchTerm, 40);
             if (!empty($books)) {
                 $cache->set($cacheKey, $books, 600);
             }
@@ -102,10 +102,16 @@ class LibraryController
             'user_id' => $_SESSION['user']['id'],
             'title' => $title,
             'author' => trim($_POST['author'] ?? '') ?: 'Auteur inconnu',
-            'genre' => trim($_POST['categories'] ?? '') ?: null,
+            'genre' => mb_substr(trim($_POST['categories'] ?? ''), 0, 80) ?: null,
             'cover_path' => trim($_POST['cover_url'] ?? '') ?: null,
             'google_volume_id' => $volumeId,
         ]);
+
+        // Sans ça, le nouveau livre existe bien en base mais la page
+        // d'accueil continue d'afficher la version mise en cache
+        // (jusqu'à 5 minutes) sans lui.
+        $cache = new CacheService();
+        $cache->deleteByPrefix('home:');
 
         header('Location: /library?added=1', true, 303);
         exit;
